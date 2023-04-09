@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/listaPartidosFragment"
+        android:name="com.example.dasentregaindividual2.lista_partidos.ListaPartidosFragment"
+        android:label="@string/jornadas"
+        tools:layout="@layout/fragment_lista_partidos" />
+
+    <fragment
+        android:id="@+id/menuPrincipalFragment"
+        android:name="com.example.dasentregaindividual2.menu_principal.MenuPrincipalFragment"
+        android:label="@string/menu_principal"
+        tools:layout="@layout/fragment_menu_principal" >
+
+        <action
+            android:id="@+id/action_menuPrincipalFragment_to_listaPartidosFragment"
+            app:destination="@id/listaPartidosFragment" />
+
+        <action
+            android:id="@+id/action_menuPrincipalFragment_to_clasificacionFragment"
+            app:destination="@id/clasificacionFragment" />
+
+        <action
+            android:id="@+id/action_menuPrincipalFragment_to_ajustesFragment"
+            app:destination="@id/ajustesFragment" />
+
+        <action
+            android:id="@+id/action_menuPrincipalFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.dasentregaindividual2.login.LoginFragment"
+        android:label="@string/iniciar_sesion"
+        tools:layout="@layout/fragment_login" >
+
+        <action
+            android:id="@+id/action_loginFragment_to_menuPrincipalFragment"
+            app:destination="@id/menuPrincipalFragment" />
+
+        <action
+            android:id="@+id/action_loginFragment_to_crearCuentaFragment"
+            app:destination="@id/crearCuentaFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/clasificacionFragment"
+        android:name="com.example.dasentregaindividual2.clasificacion.ClasificacionFragment"
+        android:label="@string/clasificacion"
+        tools:layout="@layout/fragment_clasificacion" />
+
+    <fragment
+        android:id="@+id/crearCuentaFragment"
+        android:name="com.example.dasentregaindividual2.crear_cuenta.CrearCuentaFragment"
+        android:label="@string/crear_cuenta"
+        tools:layout="@layout/fragment_crear_cuenta" >
+
+        <action
+            android:id="@+id/action_crearCuentaFragment_to_menuPrincipalFragment"
+            app:destination="@id/menuPrincipalFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/ajustesFragment"
+        android:name="com.example.dasentregaindividual2.ajustes.AjustesFragment"
+        android:label="@string/ajustes"
+        tools:layout="@layout/fragment_ajustes" />
+
+    <action
+        android:id="@+id/action_global_listaPartidosFragment"
+        app:destination="@id/listaPartidosFragment"/>
+
+</navigation>

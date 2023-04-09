@@ -1,3 +1,58 @@
 <resources>
-    <string name="app_name">DASEntregaIndividual2</string>
+    <string name="app_name" translatable="false">DASEntregaIndividual1</string>
+    <string name="cuarto_1" translatable="false">1C</string>
+    <string name="cuarto_2" translatable="false">2C</string>
+    <string name="cuarto_3" translatable="false">3C</string>
+    <string name="cuarto_4" translatable="false">4C</string>
+    <string name="racha_ultimos_partidos" translatable="false">%1$d - %2$d</string>
+    <string name="jornadas">Jornadas</string>
+    <string name="hint_campo_usuario">Introduce tu nombre de usuario</string>
+    <string name="hint_campo_contraseña">Introduce tu contraseña</string>
+    <string name="iniciar_sesion">Iniciar sesión</string>
+    <string name="clasificacion">Clasificación</string>
+    <string name="posicion_header_corto" translatable="false">Pos.</string>
+    <string name="equipo">Equipo</string>
+    <string name="victorias_header_corto">V</string>
+    <string name="derrotas_header_corto">D</string>
+    <string name="puntos_favor_header_corto">PTS+</string>
+    <string name="puntos_contra_header_corto">PTS-</string>
+    <string name="racha_header_corto">U-10</string>
+    <string name="clasificados_a_playoff">Clasificados a Playoff</string>
+    <string name="eliminados">Eliminados</string>
+    <string name="hint_campo_repetir_contraseña">Vuelve a introducir tu contraseña</string>
+    <string name="crear_cuenta">Crear cuenta</string>
+    <string name="toast_minimo_8_caracteres">La contraseña debe contener al menos 8 caracteres</string>
+    <string name="toast_formato_contraseña_invalido">El formato de la contraseña no es válido</string>
+    <string name="toast_cuenta_creada_con_exito">La cuenta ha sido creada con éxito</string>
+    <string name="toast_contraseñas_no_coinciden">Las contraseñas no coinciden</string>
+    <string name="toast_campo_vacio">El campo de \'%s\' está vacío</string>
+    <string name="toast_nombre_usuario_existente">El nombre de usuario ya existe</string>
+    <string name="toast_usuario_contraseña_incorrectos">Usuario y/o contraseñas INCORRECTOS</string>
+    <string name="toast_usuario_contraseña_correctos">Usuario y/o contraseñas CORRECTOS</string>
+    <string name="ajustes">Ajustes</string>
+    <string name="salir">Salir</string>
+    <string name="activar_modo_oscuro">Activar modo oscuro</string>
+    <string name="cambiar_idioma_titulo">Cambiar idioma</string>
+    <string name="cambiar_idioma_descripcion">Elige el idioma al que quieras cambiar</string>
+    <string name="dialogo_salir_titulo">Saliendo de la aplicación ...</string>
+    <string name="dialogo_salir_mensaje">¿Quieres salir de la aplicación y/o cerrar la sesión?</string>
+    <string name="salir_y_cerrar_sesion_mensaje">Salir y cerrar sesión</string>
+    <string name="no_salir_mensaje">No salir</string>
+    <string name="cerrar_sesion_mensaje">Cerrar sesión</string>
+    <string name="menu_principal">Menú principal</string>
+    <string name="partido">Partido</string>
+    <string name="recomendar_aplicacion">Recomendar Aplicación</string>
+    <string name="recomendacion_apk_asunto">Recomendación de aplicación</string>
+    <string name="recomendar_apk_via">Recomendar aplicación via ...</string>
+    <string name="toast_añadir_favorito">Has añadido \'%s\' a favoritos</string>
+    <string name="toast_eliminar_favorito">Has eliminado \'%s\' de favoritos</string>
+    <string name="notificacion_titulo">Información de la jornada actual</string>
+    <string name="notificacion_texto">\"¿A qué esperas para ver quién es el rival del \'%s\'?</string>
+    <string name="notificacion_grande_titulo">APK Euroliga</string>
+
+    <string-array name="idiomas_disponibles">
+        <item>Euskara</item>
+        <item>Castellano</item>
+        <item>English</item>
+    </string-array>
 </resources>

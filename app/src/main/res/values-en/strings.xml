@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="jornadas">Games</string>
+    <string name="hint_campo_usuario">Enter your username</string>
+    <string name="hint_campo_contraseña">Enter your password</string>
+    <string name="iniciar_sesion">Sign in</string>
+    <string name="clasificacion">Standings</string>
+    <string name="equipo">Team</string>
+    <string name="victorias_header_corto">W</string>
+    <string name="derrotas_header_corto">L</string>
+    <string name="puntos_favor_header_corto">PTS+</string>
+    <string name="puntos_contra_header_corto">PTS-</string>
+    <string name="racha_header_corto">L-10</string>
+    <string name="clasificados_a_playoff">Qualified to playoffs</string>
+    <string name="eliminados">Eliminated</string>
+    <string name="hint_campo_repetir_contraseña">Re-enter your password</string>
+    <string name="crear_cuenta">Create account</string>
+    <string name="toast_minimo_8_caracteres">The password must be at least 8 characters long</string>
+    <string name="toast_formato_contraseña_invalido">Password format is not valid</string>
+    <string name="toast_cuenta_creada_con_exito">The account has been created successfully</string>
+    <string name="toast_contraseñas_no_coinciden">Passwords don\'t match</string>
+    <string name="toast_campo_vacio">The \'%s\' is empty</string>
+    <string name="toast_nombre_usuario_existente">The username already exists</string>
+    <string name="toast_usuario_contraseña_incorrectos">INCORRECT username and/or password</string>
+    <string name="toast_usuario_contraseña_correctos">CORRECT username and/or password</string>
+    <string name="ajustes">Settings</string>
+    <string name="salir">Sign out</string>
+    <string name="activar_modo_oscuro">Enable dark mode</string>
+    <string name="cambiar_idioma_titulo">Change language</string>
+    <string name="cambiar_idioma_descripcion">Select the language you want to apply</string>
+    <string name="dialogo_salir_titulo">Exiting the application ...</string>
+    <string name="dialogo_salir_mensaje">Do you want to exit and/or sign out?</string>
+    <string name="salir_y_cerrar_sesion_mensaje">Exit and sign out</string>
+    <string name="no_salir_mensaje">Don\'t exit</string>
+    <string name="cerrar_sesion_mensaje">Sign out</string>
+    <string name="menu_principal">Main menu</string>
+    <string name="partido">Match</string>
+    <string name="recomendar_aplicacion">Recommend application</string>
+    <string name="recomendacion_apk_asunto">Recommendation of the application</string>
+    <string name="recomendar_apk_via">Recommend application via ...</string>
+    <string name="toast_añadir_favorito">You\'ve added \'%s\' to favourites list</string>
+    <string name="toast_eliminar_favorito">You\'ve removed \'%s\' from favourites list</string>
+    <string name="notificacion_titulo">Current game information</string>
+    <string name="notificacion_texto">What are you waiting for to discover the next rival of \'%s\'?</string>
+    <string name="notificacion_grande_titulo">Euroleague APK</string>
+</resources>

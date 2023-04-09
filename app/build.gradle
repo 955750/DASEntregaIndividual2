@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'androidx.navigation.safeargs'
 }
 
 android {
@@ -29,11 +30,28 @@ android {
 }
 
 dependencies {
+    def nav_version = '2.5.3'
+
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // Dependencia para usar 'Grafo de Navegación'
+    implementation "androidx.navigation:navigation-fragment:$nav_version"
+    implementation "androidx.navigation:navigation-ui:$nav_version"
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
+
+    // Dependencia para usar 'Preferencias'
+    implementation 'androidx.preference:preference:1.2.0'
+
+
+    /* Dependencias para tests */
     testImplementation 'junit:junit:4.13.2'
+
+
+    /* Dependencias para test instrumentados */
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
 }

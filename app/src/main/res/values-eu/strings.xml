@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="jornadas">Jardunaldiak</string>
+    <string name="hint_campo_usuario">Erabiltzaile izena sartu</string>
+    <string name="hint_campo_contraseña">Pasahitza sartu</string>
+    <string name="iniciar_sesion">Saioa hasi</string>
+    <string name="clasificacion">Sailkapena</string>
+    <string name="equipo">Taldea</string>
+    <string name="victorias_header_corto">I</string>
+    <string name="derrotas_header_corto">G</string>
+    <string name="puntos_favor_header_corto">PUN+</string>
+    <string name="puntos_contra_header_corto">PUN-</string>
+    <string name="racha_header_corto">A-10</string>
+    <string name="clasificados_a_playoff">Playoff-etara sailkatuta</string>
+    <string name="eliminados">Kanporatuta</string>
+    <string name="hint_campo_repetir_contraseña">Pasahitza berriro sartu</string>
+    <string name="crear_cuenta">Kontua sortu</string>
+    <string name="toast_minimo_8_caracteres">Pasahitzak gutxienez 8 hizkiko luzera izan behar du</string>
+    <string name="toast_formato_contraseña_invalido">Pasahitzaren formatua ez da egokia</string>
+    <string name="toast_cuenta_creada_con_exito">Kontua arazorik gabe sortu da</string>
+    <string name="toast_contraseñas_no_coinciden">Pasahitzek ez dute bat egiten</string>
+    <string name="toast_campo_vacio">\'%s\' eremua hutsik dago</string>
+    <string name="toast_nombre_usuario_existente">Sartutako erabiltzaile izena hartuta dago</string>
+    <string name="toast_usuario_contraseña_incorrectos">Erabiltzaile izen edo/eta pasahitza OKERRAK</string>
+    <string name="toast_usuario_contraseña_correctos">Erabiltzaile izen edo/eta pasahitza ZUZENAK</string>
+    <string name="ajustes">Ezarpenak</string>
+    <string name="salir">Irten</string>
+    <string name="activar_modo_oscuro">Modu iluna aktibatu</string>
+    <string name="cambiar_idioma_titulo">Hizkuntza aldatu</string>
+    <string name="cambiar_idioma_descripcion">Ezarri nahi duzun hizkuntza hautatu</string>
+    <string name="dialogo_salir_titulo">Aplikaziotik irtetzen ...</string>
+    <string name="dialogo_salir_mensaje">Aplikazioa itxi edo/eta saioa itxi nahi al duzu?</string>
+    <string name="salir_y_cerrar_sesion_mensaje">Irten eta saioa itxi</string>
+    <string name="no_salir_mensaje">Ez irten</string>
+    <string name="cerrar_sesion_mensaje">Saioa itxi</string>
+    <string name="menu_principal">Menu nagusia</string>
+    <string name="partido">Norgehiagoka</string>
+    <string name="recomendar_aplicacion">Aplikazioa gomendatu</string>
+    <string name="recomendacion_apk_asunto">Aplikazioaren gomendioa</string>
+    <string name="recomendar_apk_via">Aplikazioa gomendatu honen bidez ...</string>
+    <string name="toast_añadir_favorito">\'%s\' gehitu duzu gustukoen zerrendara</string>
+    <string name="toast_eliminar_favorito">\'%s\' kendu duzu gustukoen zerrendatik</string>
+    <string name="notificacion_titulo">Jardunaldi honetako informazioa</string>
+    <string name="notificacion_texto">Zeren zain zaude \'%s\' taldearen aurkaria nor den ikusteko?</string>
+    <string name="notificacion_grande_titulo">Euroliga APK</string>
+</resources>

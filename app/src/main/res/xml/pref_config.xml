@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:key="cat_ajustes"
+        app:title="@string/ajustes"
+        app:icon="@drawable/ic_ajustes_24dp" >
+
+        <SwitchPreferenceCompat
+            app:key="modo_oscuro"
+            app:title="@string/activar_modo_oscuro"
+            app:icon="@drawable/ic_color_24dp"
+            app:defaultValue="false"/>
+
+        <ListPreference
+            app:key="idioma"
+            app:title="@string/cambiar_idioma_titulo"
+            app:dialogTitle="@string/cambiar_idioma_descripcion"
+            app:entries="@array/idiomas_disponibles"
+            app:entryValues="@array/idiomas_disponibles"
+            app:icon="@drawable/ic_idioma_24dp"
+            app:defaultValue="English"/>
+
+    </PreferenceCategory>
+</PreferenceScreen>

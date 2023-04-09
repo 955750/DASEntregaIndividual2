@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="180dp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_partido"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        tools:strokeColor="@color/naranja_vivo"
+        app:strokeWidth="4dp"
+        tools:cardBackgroundColor="@color/naranja_oscuro"
+        app:cardCornerRadius="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="100"
+            android:padding="10dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/equipo_local"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="35">
+
+                <ImageView
+                    android:id="@+id/escudo_equipo_local"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="10dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:srcCompat="@tools:sample/avatars" />
+
+                <TextView
+                    android:id="@+id/nombre_equipo_local"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="6dp"
+                    tools:text="Equipo 1"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/blanco"
+                    android:gravity="center"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/escudo_equipo_local"
+                    app:layout_constraintBottom_toTopOf="@id/ultimos_partidos_equipo_local"/>
+
+                <TextView
+                    android:id="@+id/ultimos_partidos_equipo_local"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    tools:text="(7 - 3)"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/blanco"
+                    android:gravity="center"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/nombre_equipo_local"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/marcador_horario"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="30"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/marcador_numeros"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <!--
+                    android:textColor="@color/turquesa"
+                    android:gravity="center"
+                    android:background="@color/azul_claro"
+                     -->
+                    <TextView
+                        android:id="@+id/puntos_equipo_local"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        tools:text="33"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/turquesa_oscuro"
+                        android:background="@color/turquesa_claro"
+                        android:gravity="center"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/puntos_equipo_visitante"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        tools:text="105"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/turquesa_claro"
+                        android:gravity="center"
+                        android:background="@color/turquesa_oscuro"
+                        app:layout_constraintStart_toEndOf="@id/puntos_equipo_local"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/fecha_hora_partido"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/marcador_numeros">
+
+                    <TextView
+                        android:id="@+id/fecha_partido"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="03/03/2023"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/blanco"
+                        android:gravity="center"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <TextView
+                        android:id="@+id/hora_partido"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        tools:text="20:00"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/blanco"
+                        android:gravity="center"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/fecha_partido"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/equipo_visitante"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="35">
+
+                <ImageView
+                    android:id="@+id/escudo_equipo_visitante"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="10dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:srcCompat="@tools:sample/avatars" />
+
+                <TextView
+                    android:id="@+id/nombre_equipo_visitante"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="6dp"
+                    tools:text="Equipo 2"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/blanco"
+                    android:gravity="center"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/escudo_equipo_visitante"
+                    app:layout_constraintBottom_toTopOf="@id/ultimos_partidos_equipo_visitante"/>
+
+                <TextView
+                    android:id="@+id/ultimos_partidos_equipo_visitante"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    tools:text="(7 - 3)"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/blanco"
+                    android:gravity="center"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/nombre_equipo_visitante"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
