@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -20,13 +21,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
+import androidx.lifecycle.Observer;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.preference.PreferenceManager;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
 
 import com.example.dasentregaindividual2.R;
 import com.example.dasentregaindividual2.base_de_datos.BaseDeDatos;
+import com.example.dasentregaindividual2.base_de_datos.favorito.ListarFavoritos;
+import com.example.dasentregaindividual2.base_de_datos.usuario.ExisteParUsuarioContraseña;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -44,8 +57,8 @@ public class MenuPrincipalFragment extends Fragment {
     private Button botonRecomendarApk;
 
     /* Otros atributos */
-    private SQLiteDatabase baseDeDatos;
     private ListenerMenuPrincipalFragment listenerMenuPrincipalFragment;
+    private boolean notificacionesMostradas;
 
 
     /*
@@ -59,11 +72,7 @@ public class MenuPrincipalFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        /* Recuperar instancia de la base de datos */
-        BaseDeDatos gestorBD = new BaseDeDatos(requireContext(), "Euroliga",
-            null, 1);
-        baseDeDatos = gestorBD.getWritableDatabase();
+        notificacionesMostradas = false;
 
         /*
         * Listener para actuar de una forma determinada en función del número enviado por el
@@ -92,7 +101,8 @@ public class MenuPrincipalFragment extends Fragment {
             }
         });
 
-        crearNotificacionPartido();
+        // crearNotificacionPartido();
+        obtenerEquiposFavoritos();
     }
 
     @Override
@@ -168,12 +178,6 @@ public class MenuPrincipalFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        baseDeDatos.close();
-    }
-
     private void cerrarSesion() {
         SharedPreferences preferencias = PreferenceManager
             .getDefaultSharedPreferences(requireContext());
@@ -182,26 +186,63 @@ public class MenuPrincipalFragment extends Fragment {
         editor.apply();
     }
 
-    private void crearNotificacionPartido() {
-        /*
-        SELECT nombre_equipo FROM Favorito
-        WHERE nombre_usuario = ?
-        */
+    /*
+     * En esta función, se encola una tarea cuyo cometido es lanzar la siguiente consulta contra
+     * la base de datos remota (la tarea requiere de conexión a internet para poder acceder a la
+     * base de datos alojada en el servidor):
+     *
+     * SELECT nombre_equipo FROM Favorito
+     * WHERE nombre_usuario = ?
+     */
+    private void obtenerEquiposFavoritos() {
         SharedPreferences preferencias = PreferenceManager
-            .getDefaultSharedPreferences(requireContext());
+                .getDefaultSharedPreferences(requireContext());
         String usuario = preferencias.getString("usuario", null);
-        String[] campos = new String[] {"nombre_equipo"};
-        String[] argumentos = new String[] {usuario};
-        Cursor cEquipoFavorito = baseDeDatos.query("Favorito", campos,
-            "nombre_usuario = ?", argumentos, null, null, null);
+        Data parametros = new Data.Builder()
+                .putString("nombreUsuario", usuario)
+                .build();
 
-        ArrayList<String> listaEquiposFavoritos = new ArrayList<>();
-        while (cEquipoFavorito.moveToNext()) {
-            String equipo = cEquipoFavorito.getString(0);
-            listaEquiposFavoritos.add(equipo);
-        }
-        cEquipoFavorito.close();
-        listenerMenuPrincipalFragment.crearNotificacionesPartido(listaEquiposFavoritos);
+        Constraints restricciones = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(ListarFavoritos.class)
+                .setConstraints(restricciones)
+                .setInputData(parametros)
+                .build();
+
+        WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(otwr.getId())
+                .observe(this, new Observer<WorkInfo>() {
+
+                    /*
+                     * Una vez completada la consulta, se comprueba el resultado de la consulta.
+                     * Si se da la condición 'cantidadUsuarios == 1' se procede a completar el
+                     * proceso de inicio de sesión
+                     */
+                    @Override
+                    public void onChanged(WorkInfo workInfo) {
+                        if(workInfo != null && workInfo.getState().isFinished()) {
+                            try {
+                                String favoritosStr = workInfo.getOutputData()
+                                        .getString("equiposFavoritos");
+                                JSONArray favoritosJSON = new JSONArray(favoritosStr);
+                                ArrayList<String> listaEquiposFavoritos = new ArrayList<>();
+                                for(int i = 0; i < favoritosJSON.length(); i++) {
+                                    String nombreEquipo = favoritosJSON.getJSONObject(i)
+                                            .getString("nombre_equipo");
+                                    listaEquiposFavoritos.add(nombreEquipo);
+                                    listenerMenuPrincipalFragment.crearNotificacionesPartido(
+                                            listaEquiposFavoritos
+                                    );
+                                }
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }
+                });
+
+        WorkManager.getInstance(requireContext()).enqueue(otwr);
     }
 
     private void navegarHaciaLogin() {
