@@ -84,7 +84,6 @@ public class LoginFragment extends Fragment {
     }
 
     /*
-     * CAMBIAR COMENTARIO
      * En esta función, primero se comprueba si alguno de los 2 campos está vacío. Si ninguno de
      * los campos está vacío, se comprueba si el par usuario - contraseña existe contra la base
      * de datos remota.
@@ -178,7 +177,6 @@ public class LoginFragment extends Fragment {
      * En esta función, si hay algún usuario que cumpla las características de la consulta
      * (cantidadUsuarios = 1) significará que los datos de inicio de sesión son correctos.
      */
-
     private void iniciarSesion(String pUsuario) {
         SharedPreferences preferencias = PreferenceManager
             .getDefaultSharedPreferences(requireContext());
