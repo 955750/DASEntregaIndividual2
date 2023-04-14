@@ -149,7 +149,7 @@ public class CrearCuentaFragment extends Fragment {
         /*
         SELECT COUNT(*) FROM Usuario
         WHERE nombre_usuario = ?
-         */
+        */
         String[] campos = new String[] {"COUNT(*)"};
         String[] argumentos = new String[] {pUsuario};
         Cursor cUsuario = baseDeDatos.query("Usuario", campos, "nombre_usuario = ?",
@@ -204,6 +204,10 @@ public class CrearCuentaFragment extends Fragment {
     }
 
     private void crearCuenta() {
+        /*
+        INSERT INTO Usuario (nombre_usuario, contraseña)
+        VALUES (?, ?)
+        */
         BaseDeDatos gestorBD = new BaseDeDatos(requireContext(), "Euroliga",
             null, 1);
         SQLiteDatabase bd = gestorBD.getWritableDatabase();

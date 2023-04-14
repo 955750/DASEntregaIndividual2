@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +14,22 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.preference.PreferenceManager;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.OutOfQuotaPolicy;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
 
 import com.example.dasentregaindividual2.R;
 import com.example.dasentregaindividual2.base_de_datos.BaseDeDatos;
+import com.example.dasentregaindividual2.base_de_datos.usuario.ExisteParUsuarioContraseña;
 import com.google.android.material.textfield.TextInputEditText;
 
 
@@ -33,6 +43,7 @@ public class LoginFragment extends Fragment {
 
     /* Otros atributos */
     private SQLiteDatabase baseDeDatos;
+    private int cantidadUsuarios;
 
 
     @Override
@@ -146,6 +157,11 @@ public class LoginFragment extends Fragment {
      * (cantidadUsuarios = 1) significará que los datos de inicio de sesión son correctos.
      */
     private boolean usuarioCorrecto(String pUsuario, String pContraseña) {
+
+        usuarioCorrectoRemoto(pUsuario, pContraseña);
+        boolean a = cantidadUsuarios == 1;
+        Log.d("usuarioCorrecto", String.valueOf(a));
+
         /*
         SELECT COUNT(*) FROM Usuario
         WHERE nombre_usuario = ? AND
@@ -161,6 +177,41 @@ public class LoginFragment extends Fragment {
         int cantidadUsuarios = cUsuario.getInt(0);
         cUsuario.close();
         return cantidadUsuarios == 1;
+    }
+
+    private void usuarioCorrectoRemoto(String pUsuario, String pContraseña) {
+        Data parametros = new Data.Builder()
+                .putString("nombreUsuario", pUsuario)
+                .putString("contraseña", pContraseña)
+                .putInt("opcion", 1)
+                .build();
+
+        Constraints restricciones = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(ExisteParUsuarioContraseña.class)
+                .setConstraints(restricciones)
+                .setInputData(parametros)
+                .build();
+
+        WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(otwr.getId())
+                .observe(this, new Observer<WorkInfo>() {
+                    @Override
+                    public void onChanged(WorkInfo workInfo) {
+                        if(workInfo != null && workInfo.getState().isFinished()) {
+                            Log.d("LoginFragment", workInfo.getOutputData()
+                                    .getString("cantidadUsuarios"));
+                            String cantidadUsuariosStr = workInfo.getOutputData()
+                                    .getString("cantidadUsuarios");
+                            if (cantidadUsuariosStr != null) {
+                                cantidadUsuarios = Integer.parseInt(cantidadUsuariosStr);
+                            }
+                        }
+                    }
+                });
+
+        WorkManager.getInstance(requireContext()).enqueue(otwr);
     }
 
     private void iniciarSesion(String pUsuario) {

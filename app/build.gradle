@@ -45,6 +45,9 @@ dependencies {
     // Dependencia para usar 'Preferencias'
     implementation 'androidx.preference:preference:1.2.0'
 
+    // Dependencia para usar 'WorkManager'
+    implementation 'androidx.work:work-runtime:2.8.1'
+
 
     /* Dependencias para tests */
     testImplementation 'junit:junit:4.13.2'
