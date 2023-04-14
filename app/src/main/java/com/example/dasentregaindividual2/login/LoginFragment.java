@@ -122,7 +122,6 @@ public class LoginFragment extends Fragment {
         Data parametros = new Data.Builder()
                 .putString("nombreUsuario", pUsuario)
                 .putString("contraseña", pContraseña)
-                .putInt("opcion", 1)
                 .build();
 
         Constraints restricciones = new Constraints.Builder()
@@ -174,8 +173,10 @@ public class LoginFragment extends Fragment {
 
 
     /*
-     * En esta función, si hay algún usuario que cumpla las características de la consulta
-     * (cantidadUsuarios = 1) significará que los datos de inicio de sesión son correctos.
+     * En esta función, se realiza el proceso de inicio de sesión guardando el nombre de usuario
+     * del usuario que acaba de iniciar sesión en un archivo de preferencias. Este archivo se
+     * utiliza en el método 'onStart' para iniciar la sesión de forma automática en caso de no
+     * haber cerrado la sesión.
      */
     private void iniciarSesion(String pUsuario) {
         SharedPreferences preferencias = PreferenceManager

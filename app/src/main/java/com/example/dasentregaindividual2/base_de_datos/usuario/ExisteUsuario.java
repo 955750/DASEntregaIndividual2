@@ -17,19 +17,25 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class UsuarioValido extends Worker {
+public class ExisteUsuario extends Worker {
 
-    public UsuarioValido(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+    public ExisteUsuario(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
 
+    /*
+     * En esta función se ejecuta la siguiente consulta de forma asíncrona:
+     *
+     * SELECT COUNT(*) FROM Usuario
+     * WHERE nombre_usuario = ?
+     */
     @NonNull
     @Override
     public Result doWork() {
         String direccion = "http://ec2-54-93-62-124.eu-central-1.compute.amazonaws.com/" +
                 "jfuentes019/WEB/Entrega%20Individual%202/consultas_usuario.php";
 
-        HttpURLConnection urlConnection = null;
+        HttpURLConnection urlConnection;
         Data resultado = null;
 
         try {
@@ -44,8 +50,10 @@ public class UsuarioValido extends Worker {
 
             // Añadir parámetros a la llamada HTTP
             String nombreUsuario = getInputData().getString("nombreUsuario");
+            String opcion = "2";
             Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("nombreUsuario", nombreUsuario);
+                    .appendQueryParameter("nombreUsuario", nombreUsuario)
+                    .appendQueryParameter("opcion", opcion);
             String parametros = builder.build().getEncodedQuery();
 
             PrintWriter out = new PrintWriter(urlConnection.getOutputStream());
@@ -74,7 +82,6 @@ public class UsuarioValido extends Worker {
         }
 
         if (resultado != null) {
-            Log.d("UsuarioCorrecto", resultado.getString("cantidadUsuarios"));
             return Result.success(resultado);
         } else {
             return Result.failure();

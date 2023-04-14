@@ -17,24 +17,23 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class ExisteParUsuarioContraseña extends Worker {
+public class InsertarUsuario extends Worker {
 
-    public ExisteParUsuarioContraseña(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+    public InsertarUsuario(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
 
     /*
      * En esta función se ejecuta la siguiente consulta de forma asíncrona:
      *
-     * SELECT COUNT(*) FROM Usuario
-     * WHERE nombre_usuario = ? AND
-     * contraseña = ?
+     * INSERT INTO Usuario (nombre_usuario, contraseña)
+     * VALUES (?, ?)
      */
     @NonNull
     @Override
     public Result doWork() {
         String direccion = "http://ec2-54-93-62-124.eu-central-1.compute.amazonaws.com/" +
-                           "jfuentes019/WEB/Entrega%20Individual%202/consultas_usuario.php";
+                "jfuentes019/WEB/Entrega%20Individual%202/consultas_usuario.php";
 
         HttpURLConnection urlConnection;
         Data resultado = null;
@@ -52,7 +51,9 @@ public class ExisteParUsuarioContraseña extends Worker {
             // Añadir parámetros a la llamada HTTP
             String nombreUsuario = getInputData().getString("nombreUsuario");
             String contraseña = getInputData().getString("contraseña");
-            String opcion = "1";
+            Log.d("InsertarUsuario", "Usuario = " + nombreUsuario);
+            Log.d("InsertarUsuario", "Contraseña = " + contraseña);
+            String opcion = "3";
             Uri.Builder builder = new Uri.Builder()
                     .appendQueryParameter("nombreUsuario", nombreUsuario)
                     .appendQueryParameter("contraseña", contraseña)
@@ -76,8 +77,8 @@ public class ExisteParUsuarioContraseña extends Worker {
 
                 // Preparar los datos a devolver
                 resultado = new Data.Builder()
-                    .putString("cantidadUsuarios", respuesta)
-                    .build();
+                        .putString("consultaExitosa", respuesta)
+                        .build();
                 inputStream.close();
             }
         } catch (IOException e) {

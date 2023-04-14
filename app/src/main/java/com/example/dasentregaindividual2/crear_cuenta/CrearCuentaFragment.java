@@ -15,12 +15,23 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.preference.PreferenceManager;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
 
 import com.example.dasentregaindividual2.R;
 import com.example.dasentregaindividual2.base_de_datos.BaseDeDatos;
+import com.example.dasentregaindividual2.base_de_datos.usuario.ExisteParUsuarioContraseña;
+import com.example.dasentregaindividual2.base_de_datos.usuario.ExisteUsuario;
+import com.example.dasentregaindividual2.base_de_datos.usuario.InsertarUsuario;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.regex.Pattern;
@@ -42,15 +53,15 @@ public class CrearCuentaFragment extends Fragment {
 
         /* Recuperar instancia de la base de datos */
         BaseDeDatos gestorBD = new BaseDeDatos(requireContext(), "Euroliga",
-            null, 1);
+                null, 1);
         baseDeDatos = gestorBD.getWritableDatabase();
     }
 
     @Override
     public View onCreateView(
-        LayoutInflater inflater,
-        ViewGroup container,
-        Bundle savedInstanceState
+            LayoutInflater inflater,
+            ViewGroup container,
+            Bundle savedInstanceState
     ) {
         return inflater.inflate(R.layout.fragment_crear_cuenta, container, false);
     }
@@ -93,49 +104,49 @@ public class CrearCuentaFragment extends Fragment {
     private boolean camposValidos() {
         if (usuarioTV.getText().toString().equals("")) {
             Toast.makeText(
-                requireContext(),
-            getString(R.string.toast_campo_vacio, "Usuario"),
-                Toast.LENGTH_SHORT)
-            .show();
+                            requireContext(),
+                            getString(R.string.toast_campo_vacio, "Usuario"),
+                            Toast.LENGTH_SHORT)
+                    .show();
             return false;
         } else if (contraseñaTV.getText().toString().equals("")) {
             Toast.makeText(
-                requireContext(),
-                getString(R.string.toast_campo_vacio, "Contraseña"),
-                Toast.LENGTH_SHORT)
-            .show();
+                            requireContext(),
+                            getString(R.string.toast_campo_vacio, "Contraseña"),
+                            Toast.LENGTH_SHORT)
+                    .show();
             return false;
         } else if (repetirContraseñaTV.getText().toString().equals("")) {
             Toast.makeText(
-                requireContext(),
-                getString(R.string.toast_campo_vacio, "Repetir Contraseña"),
-                Toast.LENGTH_SHORT)
-            .show();
+                            requireContext(),
+                            getString(R.string.toast_campo_vacio, "Repetir Contraseña"),
+                            Toast.LENGTH_SHORT)
+                    .show();
             return false;
         } else if (!usuarioValido(usuarioTV.getText().toString())) {
             Toast.makeText(
-                requireContext(),
-                getString(R.string.toast_nombre_usuario_existente),
-                Toast.LENGTH_SHORT)
-            .show();
+                            requireContext(),
+                            getString(R.string.toast_nombre_usuario_existente),
+                            Toast.LENGTH_SHORT)
+                    .show();
             return false;
         } else if (!contraseñaTV.getText().toString().equals(
-            repetirContraseñaTV.getText().toString())
+                repetirContraseñaTV.getText().toString())
         ) {
             Log.d("CrearCuentaFragment", "Contraseñas iguales = true");
             Toast.makeText(
-                requireContext(),
-                getString(R.string.toast_contraseñas_no_coinciden),
-                Toast.LENGTH_SHORT)
-            .show();
+                            requireContext(),
+                            getString(R.string.toast_contraseñas_no_coinciden),
+                            Toast.LENGTH_SHORT)
+                    .show();
             return false;
         } else if (!contraseñaCumpleFormato()) {
             return false;
         } else {
             Toast.makeText(
-                requireContext(),
-                getString(R.string.toast_cuenta_creada_con_exito),
-                Toast.LENGTH_SHORT
+                    requireContext(),
+                    getString(R.string.toast_cuenta_creada_con_exito),
+                    Toast.LENGTH_SHORT
             ).show();
             return true;
         }
@@ -149,11 +160,11 @@ public class CrearCuentaFragment extends Fragment {
         /*
         SELECT COUNT(*) FROM Usuario
         WHERE nombre_usuario = ?
-        */
+         */
         String[] campos = new String[] {"COUNT(*)"};
         String[] argumentos = new String[] {pUsuario};
         Cursor cUsuario = baseDeDatos.query("Usuario", campos, "nombre_usuario = ?",
-            argumentos, null, null, null);
+                argumentos, null, null, null);
 
         cUsuario.moveToFirst();
         int cantidadUsuarios = cUsuario.getInt(0);
@@ -179,24 +190,24 @@ public class CrearCuentaFragment extends Fragment {
 
         String contraseña = contraseñaTV.getText().toString();
         String regex = "^(?=.*[0-9])" +
-                       "(?=.*[a-z])(?=.*[A-Z])" +
-                       "(?=.*[@#$%^&+=])" +
-                       "(?=\\S+$).{8,20}$";
+                "(?=.*[a-z])(?=.*[A-Z])" +
+                "(?=.*[@#$%^&+=])" +
+                "(?=\\S+$).{8,20}$";
         Pattern patronContraseña = Pattern.compile(regex);
         boolean cumplePatron = patronContraseña.matcher(contraseña).matches();
         if (contraseña.length() < 8) {
             Toast.makeText(
-                requireContext(),
-                getString(R.string.toast_minimo_8_caracteres),
-                Toast.LENGTH_SHORT)
-            .show();
+                            requireContext(),
+                            getString(R.string.toast_minimo_8_caracteres),
+                            Toast.LENGTH_SHORT)
+                    .show();
             return false;
         } else if (!cumplePatron) {
             Toast.makeText(
-                requireContext(),
-                getString(R.string.toast_formato_contraseña_invalido),
-                Toast.LENGTH_SHORT)
-            .show();
+                            requireContext(),
+                            getString(R.string.toast_formato_contraseña_invalido),
+                            Toast.LENGTH_SHORT)
+                    .show();
             return false;
         } else {
             return true;
@@ -204,12 +215,8 @@ public class CrearCuentaFragment extends Fragment {
     }
 
     private void crearCuenta() {
-        /*
-        INSERT INTO Usuario (nombre_usuario, contraseña)
-        VALUES (?, ?)
-        */
         BaseDeDatos gestorBD = new BaseDeDatos(requireContext(), "Euroliga",
-            null, 1);
+                null, 1);
         SQLiteDatabase bd = gestorBD.getWritableDatabase();
         ContentValues nuevoUsuario = new ContentValues();
         nuevoUsuario.put("nombre_usuario", usuarioTV.getText().toString());
@@ -222,7 +229,7 @@ public class CrearCuentaFragment extends Fragment {
 
     private void iniciarSesion(String pUsuario) {
         SharedPreferences preferencias = PreferenceManager
-            .getDefaultSharedPreferences(requireContext());
+                .getDefaultSharedPreferences(requireContext());
         SharedPreferences.Editor editor = preferencias.edit();
         editor.putString("usuario", pUsuario);
         editor.apply();
@@ -230,7 +237,7 @@ public class CrearCuentaFragment extends Fragment {
 
     private void navegarHaciaMenuPrincipal(View view) {
         NavDirections accion = CrearCuentaFragmentDirections
-            .actionCrearCuentaFragmentToMenuPrincipalFragment();
+                .actionCrearCuentaFragmentToMenuPrincipalFragment();
         Navigation.findNavController(view).navigate(accion);
     }
 }

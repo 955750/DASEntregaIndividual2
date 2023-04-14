@@ -49,6 +49,7 @@
     <string name="notificacion_titulo">Información de la jornada actual</string>
     <string name="notificacion_texto">\"¿A qué esperas para ver quién es el rival del \'%s\'?</string>
     <string name="notificacion_grande_titulo">APK Euroliga</string>
+    <string name="toast_creacion_cuenta_error">Ha ocurrido un error al crear la cuenta</string>
 
     <string-array name="idiomas_disponibles">
         <item>Euskara</item>

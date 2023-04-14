@@ -43,4 +43,5 @@
     <string name="notificacion_titulo">Current game information</string>
     <string name="notificacion_texto">What are you waiting for to discover the next rival of \'%s\'?</string>
     <string name="notificacion_grande_titulo">Euroleague APK</string>
+    <string name="toast_creacion_cuenta_error">An error has occurred while creating an account</string>
 </resources>

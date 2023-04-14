@@ -43,4 +43,5 @@
     <string name="notificacion_titulo">Jardunaldi honetako informazioa</string>
     <string name="notificacion_texto">Zeren zain zaude \'%s\' taldearen aurkaria nor den ikusteko?</string>
     <string name="notificacion_grande_titulo">Euroliga APK</string>
+    <string name="toast_creacion_cuenta_error">Kontua sortzerakoan errore bat jazo da</string>
 </resources>
