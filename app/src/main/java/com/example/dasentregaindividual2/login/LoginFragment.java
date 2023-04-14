@@ -2,7 +2,6 @@ package com.example.dasentregaindividual2.login;
 
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,12 +22,10 @@ import androidx.work.Constraints;
 import androidx.work.Data;
 import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
-import androidx.work.OutOfQuotaPolicy;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.example.dasentregaindividual2.R;
-import com.example.dasentregaindividual2.base_de_datos.BaseDeDatos;
 import com.example.dasentregaindividual2.base_de_datos.usuario.ExisteParUsuarioContraseña;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -41,20 +38,6 @@ public class LoginFragment extends Fragment {
     private Button botonIniciarSesion;
     private Button botonCrearCuenta;
 
-    /* Otros atributos */
-    private SQLiteDatabase baseDeDatos;
-    private int cantidadUsuarios;
-
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
-        /* Recuperar instancia de la base de datos */
-        BaseDeDatos gestorBD = new BaseDeDatos (requireContext(), "Euroliga",
-            null, 1);
-        baseDeDatos = gestorBD.getWritableDatabase();
-    }
 
     @Override
     public View onCreateView(
@@ -75,7 +58,7 @@ public class LoginFragment extends Fragment {
         botonIniciarSesion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                hacerLogin();
+                comprobarCampos();
             }
         });
 
@@ -100,86 +83,43 @@ public class LoginFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        baseDeDatos.close();
-    }
-    
-    private void hacerLogin() {
-        if (camposValidos()) {
-            iniciarSesion(usuarioTV.getText().toString());
-            navegarHaciaMenuPrincipal();
-        }
-    }
-
     /*
-     * En esta función, primero se validan los campos y una vez que cumplen con el formato correcto
-     * se comprueba si el usuario y la contraseña son correctos
+     * CAMBIAR COMENTARIO
+     * En esta función, primero se comprueba si alguno de los 2 campos está vacío. Si ninguno de
+     * los campos está vacío, se comprueba si el par usuario - contraseña existe contra la base
+     * de datos remota.
      */
-    private boolean camposValidos() {
+    private void comprobarCampos() {
         if (usuarioTV.getText().toString().equals("")) {
             Toast.makeText(
                 requireContext(),
                 getString(R.string.toast_campo_vacio, "Usuario"),
                 Toast.LENGTH_SHORT)
             .show();
-            return false;
         } else if (contraseñaTV.getText().toString().equals("")) {
             Toast.makeText(
                 requireContext(),
                 getString(R.string.toast_campo_vacio, "Contraseña"),
                 Toast.LENGTH_SHORT)
             .show();
-            return false;
-        } else if (!usuarioCorrecto(
-            usuarioTV.getText().toString(),
-            contraseñaTV.getText().toString()
-        )) {
-            Toast.makeText(
-                requireContext(),
-                getString(R.string.toast_usuario_contraseña_incorrectos),
-                Toast.LENGTH_SHORT
-            ).show();
-            return false;
         } else {
-            Toast.makeText(
-                requireContext(),
-                getString(R.string.toast_usuario_contraseña_correctos),
-                Toast.LENGTH_SHORT
-            ).show();
-            return true;
+            comprobarUsuarioCorrecto(
+                usuarioTV.getText().toString(),
+                contraseñaTV.getText().toString()
+            );
         }
     }
 
     /*
-     * En esta función, si hay algún usuario que cumpla las características de la consulta
-     * (cantidadUsuarios = 1) significará que los datos de inicio de sesión son correctos.
+     * En esta función, se encola una tarea cuyo cometido es lanzar la siguiente consulta contra
+     * la base de datos remota (la tarea requiere de conexión a internet para poder acceder a la
+     * base de datos alojada en el servidor):
+     *
+     * SELECT COUNT(*) FROM Usuario
+     * WHERE nombre_usuario = ? AND
+     * contraseña = ?
      */
-    private boolean usuarioCorrecto(String pUsuario, String pContraseña) {
-
-        usuarioCorrectoRemoto(pUsuario, pContraseña);
-        boolean a = cantidadUsuarios == 1;
-        Log.d("usuarioCorrecto", String.valueOf(a));
-
-        /*
-        SELECT COUNT(*) FROM Usuario
-        WHERE nombre_usuario = ? AND
-        contraseña = ?
-        */
-        String[] campos = new String[]{"COUNT(*)"};
-        String[] argumentos = new String[]{pUsuario, pContraseña};
-        Cursor cUsuario = baseDeDatos.query("Usuario", campos,
-                "nombre_usuario = ? AND contraseña = ?",
-                argumentos, null, null, null);
-
-        cUsuario.moveToFirst();
-        int cantidadUsuarios = cUsuario.getInt(0);
-        cUsuario.close();
-        return cantidadUsuarios == 1;
-    }
-
-    private void usuarioCorrectoRemoto(String pUsuario, String pContraseña) {
+    private void comprobarUsuarioCorrecto(String pUsuario, String pContraseña) {
         Data parametros = new Data.Builder()
                 .putString("nombreUsuario", pUsuario)
                 .putString("contraseña", pContraseña)
@@ -197,15 +137,34 @@ public class LoginFragment extends Fragment {
 
         WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(otwr.getId())
                 .observe(this, new Observer<WorkInfo>() {
+
+                    /*
+                     * Una vez completada la consulta, se comprueba el resultado de la consulta.
+                     * Si se da la condición 'cantidadUsuarios == 1' se procede a completar el
+                     * proceso de inicio de sesión
+                     */
                     @Override
                     public void onChanged(WorkInfo workInfo) {
                         if(workInfo != null && workInfo.getState().isFinished()) {
-                            Log.d("LoginFragment", workInfo.getOutputData()
-                                    .getString("cantidadUsuarios"));
                             String cantidadUsuariosStr = workInfo.getOutputData()
                                     .getString("cantidadUsuarios");
                             if (cantidadUsuariosStr != null) {
-                                cantidadUsuarios = Integer.parseInt(cantidadUsuariosStr);
+                                int cantidadUsuarios = Integer.parseInt(cantidadUsuariosStr);
+                                if (cantidadUsuarios == 1) { // El par usuario - contraseña EXISTE
+                                    Toast.makeText(
+                                        requireContext(),
+                                        getString(R.string.toast_usuario_contraseña_correctos),
+                                        Toast.LENGTH_SHORT
+                                    ).show();
+                                    iniciarSesion(usuarioTV.getText().toString());
+                                    navegarHaciaMenuPrincipal();
+                                } else { // El par usuario - contraseña NO EXISTE
+                                    Toast.makeText(
+                                        requireContext(),
+                                        getString(R.string.toast_usuario_contraseña_incorrectos),
+                                        Toast.LENGTH_SHORT
+                                    ).show();
+                                }
                             }
                         }
                     }
@@ -213,6 +172,12 @@ public class LoginFragment extends Fragment {
 
         WorkManager.getInstance(requireContext()).enqueue(otwr);
     }
+
+
+    /*
+     * En esta función, si hay algún usuario que cumpla las características de la consulta
+     * (cantidadUsuarios = 1) significará que los datos de inicio de sesión son correctos.
+     */
 
     private void iniciarSesion(String pUsuario) {
         SharedPreferences preferencias = PreferenceManager
