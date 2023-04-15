@@ -3,15 +3,12 @@ package com.example.dasentregaindividual2.menu_principal;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -34,9 +31,7 @@ import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.example.dasentregaindividual2.R;
-import com.example.dasentregaindividual2.base_de_datos.BaseDeDatos;
 import com.example.dasentregaindividual2.base_de_datos.favorito.ListarFavoritos;
-import com.example.dasentregaindividual2.base_de_datos.usuario.ExisteParUsuarioContraseña;
 
 import org.json.JSONArray;
 import org.json.JSONException;
