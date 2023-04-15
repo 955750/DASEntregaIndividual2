@@ -104,7 +104,7 @@ public class ListaPartidosFragment extends Fragment {
 
                     /*
                      * Una vez completada la consulta, se recupera la información que nos
-                     * devuelve esta y se pasan a la función 'recuperarEquiposDeUnPartido' para
+                     * devuelve esta y se pasa a la función 'recuperarEquiposDeUnPartido' para
                      * recuperar la información de los equipos que juegan cada partido.
                      */
                     @Override
