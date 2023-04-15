@@ -1,5 +1,7 @@
 package com.example.dasentregaindividual2.base_de_datos.modelos;
 
+import androidx.annotation.NonNull;
+
 public class Partido {
 
     private EquipoPartido[] equipos;
@@ -26,5 +28,14 @@ public class Partido {
 
     public String getHora() {
         return this.hora;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Local = " + equipos[0].getNombre() +
+                "; Visitante = " + equipos[1].getNombre() +
+                "; Fecha = " + fecha +
+                "; Hora = " + hora;
     }
 }

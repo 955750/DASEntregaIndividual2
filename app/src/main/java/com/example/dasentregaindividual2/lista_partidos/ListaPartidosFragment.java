@@ -1,8 +1,6 @@
 package com.example.dasentregaindividual2.lista_partidos;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,12 +10,23 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
 
 import com.example.dasentregaindividual2.R;
-import com.example.dasentregaindividual2.base_de_datos.BaseDeDatos;
+import com.example.dasentregaindividual2.base_de_datos.ListarEquiposDeUnPartido;
 import com.example.dasentregaindividual2.base_de_datos.modelos.EquipoPartido;
 import com.example.dasentregaindividual2.base_de_datos.modelos.Partido;
+import com.example.dasentregaindividual2.base_de_datos.partido.ListarPartidos;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 public class ListaPartidosFragment extends Fragment {
 
@@ -25,8 +34,9 @@ public class ListaPartidosFragment extends Fragment {
     private RecyclerView jornadasRecyclerView;
 
     /* Otros atributos */
-    private SQLiteDatabase baseDeDatos;
     private ListenerListaPartidosFragment listenerListaPartidosFragment;
+    private Partido[] listaPartidos;
+    private int listaPartidosInd;
 
 
     /*
@@ -41,17 +51,15 @@ public class ListaPartidosFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /* Recuperar instancia de la base de datos */
-        BaseDeDatos gestorBD = new BaseDeDatos(requireContext(), "Euroliga",
-                null, 1);
-        baseDeDatos = gestorBD.getWritableDatabase();
-
         /* RECUPERAR DATOS DEL PARTIDO SELECCIONADO */
         if (getArguments() != null) {
             int cantidadEquiposFavoritos = getArguments().getInt("cantidadFavoritos");
             Log.d("ListaPartidosFragment", String.valueOf(cantidadEquiposFavoritos));
             listenerListaPartidosFragment.borrarNotificaciones(cantidadEquiposFavoritos);
         }
+
+        listaPartidos = new Partido[9];
+        listaPartidosInd = 0;
     }
 
     @Override
@@ -68,7 +76,7 @@ public class ListaPartidosFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         jornadasRecyclerView = view.findViewById(R.id.jornadas_recycler_view);
-        jornadasRecyclerView.setAdapter(new ListaPartidosAdapter(recuperarListaDePartidos()));
+        recuperarListaDePartidos();
     }
 
     @Override
@@ -82,74 +90,134 @@ public class ListaPartidosFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        baseDeDatos.close();
+    private void recuperarListaDePartidos() {
+        Constraints restricciones = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(ListarPartidos.class)
+                .setConstraints(restricciones)
+                .build();
+
+        WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(otwr.getId())
+                .observe(getViewLifecycleOwner(), new Observer<WorkInfo>() {
+
+                    /*
+                     * Una vez completada la consulta, se recupera la información que nos
+                     * devuelve esta y se pasan a la función 'recuperarEquiposDeUnPartido' para
+                     * recuperar la información de los equipos que juegan cada partido.
+                     */
+                    @Override
+                    public void onChanged(WorkInfo workInfo) {
+                        if(workInfo != null && workInfo.getState().isFinished()) {
+                            try {
+                                String listaPartidosStr = workInfo.getOutputData()
+                                        .getString("listaPartidos");
+                                JSONArray listaPartidosJSON = new JSONArray(listaPartidosStr);
+                                for (int i = 0; i < listaPartidosJSON.length(); i++) {
+                                    String partidoId = listaPartidosJSON.getJSONObject(i)
+                                            .getString("partidoId");
+                                    // Este dato sería útil de cara a agregar más de una jornada
+                                    Integer numJornada = Integer.parseInt(listaPartidosJSON
+                                            .getJSONObject(i).getString("numJornada"));
+                                    String fecha = listaPartidosJSON.getJSONObject(i)
+                                            .getString("fecha");
+                                    String hora = listaPartidosJSON.getJSONObject(i)
+                                            .getString("hora");
+                                    Log.d("ListaPartidosFragment", partidoId + ", " + numJornada + ", " + fecha + ", " + hora);
+                                    recuperarEquiposDeUnPartido(partidoId, numJornada, fecha, hora);
+                                }
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }
+                });
+
+        WorkManager.getInstance(requireContext()).enqueue(otwr);
     }
 
-    private Partido[] recuperarListaDePartidos() {
-        Cursor cPartido = baseDeDatos.rawQuery(
-            "SELECT * FROM Partido", null
-        );
-        Partido[] listaPartidos = new Partido[9];
-        int j = 0;
-        while (cPartido.moveToNext()) {
-            /*
-             * Formatear los resultados de la consulta de forma que podamos hacer uso de ellos en la
-             * aplicación.
-             */
-            Integer partidoId = cPartido.getInt(0);
-            Integer numJornada = cPartido.getInt(1); // Este dato sería útil de cara a agregar más de una jornada
-            String fecha = cPartido.getString(2);
-            String hora = cPartido.getString(3);
-            EquipoPartido[] equiposPartido = recuperarEquiposDeUnPartido(partidoId);
-            listaPartidos[j] = new Partido(equiposPartido, fecha, hora);
-            j++;
-        }
-        cPartido.close();
-        return listaPartidos;
-    }
+    private void recuperarEquiposDeUnPartido(
+            String partidoId,
+            Integer numJornada,
+            String fecha,
+            String hora
+    ) {
+        Data parametros = new Data.Builder()
+                .putString("partidoId", partidoId)
+                .build();
 
-    private EquipoPartido[] recuperarEquiposDeUnPartido(Integer partidoId){
-        /*
-        SELECT j.puntos, j.partido_id, j.local, e.nombre, e.escudo_id, e.part_ganados_ult_10,
-        e.part_perdidos_ult_10
-        FROM Juega AS j INNER JOIN Equipo AS e ON j.nombre_equipo = e.nombre
-        WHERE j.partido_id = ?
-        */
-        String[] campos = new String[] {"j.puntos", "j.partido_id", "j.local", "e.nombre",
-                "e.escudo_id", "e.part_ganados_ult_10", "e.part_perdidos_ult_10"};
-        String[] argumentos = new String[] {partidoId.toString()};
-        String tabla = "Juega AS j INNER JOIN Equipo AS e ON j.nombre_equipo = e.nombre";
-        Cursor cEquipoPartido = baseDeDatos.query(tabla, campos, "j.partido_id = ?",
-            argumentos, null, null, null);
+        Constraints restricciones = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
 
-        /*
-         * Formatear los resultados de la consulta de forma que podamos hacer uso de ellos en la
-         * aplicación.
-         */
-        EquipoPartido[] equiposPartido = new EquipoPartido[2];
-        while (cEquipoPartido.moveToNext()) {
-            int puntos = cEquipoPartido.getInt(0);
-            int local = cEquipoPartido.getInt(2);
-            String nombre = cEquipoPartido.getString(3);
-            int escudoId = cEquipoPartido.getInt(4);
-            int partGanUlt10 = cEquipoPartido.getInt(5);
-            int partPerUlt10 = cEquipoPartido.getInt(6);
-            EquipoPartido eq = new EquipoPartido(
-                escudoId,
-                nombre,
-                getString(R.string.racha_ultimos_partidos, partGanUlt10, partPerUlt10),
-                puntos
-            );
-            if (local == 1) {
-                equiposPartido[0] = eq;
-            } else {
-                equiposPartido[1] = eq;
-            }
-        }
-        cEquipoPartido.close();
-        return equiposPartido;
+        OneTimeWorkRequest otwr2 = new OneTimeWorkRequest.Builder(ListarEquiposDeUnPartido.class)
+                .setConstraints(restricciones)
+                .setInputData(parametros)
+                .build();
+
+        WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(otwr2.getId())
+                .observe(this, new Observer<WorkInfo>() {
+
+                    /*
+                     * Una vez completada la consulta, por cada equipo que disputa el partido
+                     * se recupera su correspondiente información y se transforma en clases
+                     * modelo de forma que los datos recuperados se puedan usar en la aplicación
+                     * para mostrarlos en el 'RecyclerView' del fragmento
+                     */
+                    @Override
+                    public void onChanged(WorkInfo workInfo) {
+                        if(workInfo != null && workInfo.getState().isFinished()) {
+                            try {
+                                String listaEquiposPartidoStr = workInfo.getOutputData()
+                                        .getString("listaEquiposPartido");
+                                Log.d("ListaPartidosFragment", listaEquiposPartidoStr);
+                                JSONArray listaEquiposPartidoJSON = new JSONArray(
+                                        listaEquiposPartidoStr);
+                                EquipoPartido[] equiposPartido = new EquipoPartido[2];
+                                int j = 0;
+                                for(int i = 0; i < listaEquiposPartidoJSON.length(); i++) {
+                                    int puntos = Integer.parseInt(listaEquiposPartidoJSON
+                                            .getJSONObject(i).getString("puntos"));
+                                    int local = Integer.parseInt(listaEquiposPartidoJSON
+                                            .getJSONObject(i).getString("local"));
+                                    String nombre = listaEquiposPartidoJSON.getJSONObject(i)
+                                            .getString("nombre");
+                                    int escudoId = Integer.parseInt(listaEquiposPartidoJSON
+                                            .getJSONObject(i).getString("escudoId"));
+                                    int partGanUlt10 = Integer.parseInt(listaEquiposPartidoJSON
+                                            .getJSONObject(i).getString("partGanUlt10"));
+                                    int partPerUlt10 = Integer.parseInt(listaEquiposPartidoJSON
+                                            .getJSONObject(i).getString("partPerUlt10"));
+
+                                    EquipoPartido eq = new EquipoPartido(
+                                            escudoId,
+                                            nombre,
+                                            getString(R.string.racha_ultimos_partidos, partGanUlt10, partPerUlt10),
+                                            puntos
+                                    );
+                                    if (local == 1) {
+                                        equiposPartido[0] = eq;
+                                    } else {
+                                        equiposPartido[1] = eq;
+                                    }
+                                }
+                                Partido partidoJornada = new Partido(equiposPartido, fecha, hora);
+                                Log.d("ListaPartidosFragment", partidoJornada.toString());
+                                listaPartidos[listaPartidosInd] = partidoJornada;
+                                listaPartidosInd++;
+                                if (listaPartidosInd == 9) {
+                                    jornadasRecyclerView.setAdapter(
+                                            new ListaPartidosAdapter(listaPartidos)
+                                    );
+                                }
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }
+                });
+
+        WorkManager.getInstance(requireContext()).enqueue(otwr2);
     }
 }
