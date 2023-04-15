@@ -58,7 +58,6 @@ public class MenuPrincipalFragment extends Fragment {
 
     /* Otros atributos */
     private ListenerMenuPrincipalFragment listenerMenuPrincipalFragment;
-    private boolean notificacionesMostradas;
 
 
     /*
@@ -72,7 +71,6 @@ public class MenuPrincipalFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        notificacionesMostradas = false;
 
         /*
         * Listener para actuar de una forma determinada en función del número enviado por el
