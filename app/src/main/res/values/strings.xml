@@ -50,6 +50,8 @@
     <string name="notificacion_texto">\"¿A qué esperas para ver quién es el rival del \'%s\'?</string>
     <string name="notificacion_grande_titulo">APK Euroliga</string>
     <string name="toast_creacion_cuenta_error">Ha ocurrido un error al crear la cuenta</string>
+    <string name="toast_añadir_favoritos_error">Ha ocurrido un error al añadir \'%s\' a favoritos</string>
+    <string name="toast_eliminar_favoritos_error">Ha ocurrido un error al eliminar \'%s\' de favoritos</string>
 
     <string-array name="idiomas_disponibles">
         <item>Euskara</item>

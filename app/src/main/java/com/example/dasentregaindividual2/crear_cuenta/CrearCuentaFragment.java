@@ -244,9 +244,9 @@ public class CrearCuentaFragment extends Fragment {
                      * 'MenuPrincipalFragment'.
                      */
                     @Override
-                    public void onChanged(WorkInfo workInfo2) {
-                        if(workInfo2 != null && workInfo2.getState().isFinished()) {
-                            String consultaExitosaStr = workInfo2.getOutputData()
+                    public void onChanged(WorkInfo workInfo) {
+                        if(workInfo != null && workInfo.getState().isFinished()) {
+                            String consultaExitosaStr = workInfo.getOutputData()
                                     .getString("consultaExitosa");
                             if (consultaExitosaStr != null) {
                                 int consultaExitosa = Integer.parseInt(consultaExitosaStr);
