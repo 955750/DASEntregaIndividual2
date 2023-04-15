@@ -44,18 +44,6 @@ public class CrearCuentaFragment extends Fragment {
     private TextInputEditText repetirContraseñaTV;
     private Button crearCuenta;
 
-    /* Otros atributos */
-    private SQLiteDatabase baseDeDatos;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        /* Recuperar instancia de la base de datos */
-        BaseDeDatos gestorBD = new BaseDeDatos(requireContext(), "Euroliga",
-                null, 1);
-        baseDeDatos = gestorBD.getWritableDatabase();
-    }
 
     @Override
     public View onCreateView(
@@ -77,99 +65,50 @@ public class CrearCuentaFragment extends Fragment {
         crearCuenta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                crearUsuarioYHacerLogin(view);
+                // crearUsuarioYHacerLogin(view);
+                comprobarCampos();
             }
         });
     }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        baseDeDatos.close();
-    }
-
-    private void crearUsuarioYHacerLogin(View view) {
-        if (camposValidos()) {
-            crearCuenta();
-            navegarHaciaMenuPrincipal(view);
-        }
-    }
-
     /*
-     * En esta función, primero se validan los campos y una vez que cumplen con el formato correcto
-     * se comprueba si el usuario existe (no puede haber más de un usuario con el mismo nombre de
-     * usuario) y que las contraseñas coinciden. Finalmente, si se cumplen todos los requisitos se
-     * procede a la creación de la cuenta
+     * En esta función, primero se comprueba si alguno de los 3 campos está vacío. Si ninguno de
+     * ellos está vacío, primero si el contenido de los 2 campos de contraseña coincide y en caso
+     * de ser así se comprueba si cumple el formato adecuado. En caso de cumplir todos los
+     * requisitos, se comprueba si el nombre de usuario está disponible contra la base de datos
+     * remota.
      */
-    private boolean camposValidos() {
+    private void comprobarCampos() {
         if (usuarioTV.getText().toString().equals("")) {
             Toast.makeText(
-                            requireContext(),
-                            getString(R.string.toast_campo_vacio, "Usuario"),
-                            Toast.LENGTH_SHORT)
-                    .show();
-            return false;
+                    requireContext(),
+                    getString(R.string.toast_campo_vacio, "Usuario"),
+                    Toast.LENGTH_SHORT)
+            .show();
         } else if (contraseñaTV.getText().toString().equals("")) {
             Toast.makeText(
-                            requireContext(),
-                            getString(R.string.toast_campo_vacio, "Contraseña"),
-                            Toast.LENGTH_SHORT)
-                    .show();
-            return false;
+                    requireContext(),
+                    getString(R.string.toast_campo_vacio, "Contraseña"),
+                    Toast.LENGTH_SHORT)
+            .show();
         } else if (repetirContraseñaTV.getText().toString().equals("")) {
             Toast.makeText(
-                            requireContext(),
-                            getString(R.string.toast_campo_vacio, "Repetir Contraseña"),
-                            Toast.LENGTH_SHORT)
-                    .show();
-            return false;
-        } else if (!usuarioValido(usuarioTV.getText().toString())) {
-            Toast.makeText(
-                            requireContext(),
-                            getString(R.string.toast_nombre_usuario_existente),
-                            Toast.LENGTH_SHORT)
-                    .show();
-            return false;
+                    requireContext(),
+                    getString(R.string.toast_campo_vacio, "Repetir Contraseña"),
+                    Toast.LENGTH_SHORT)
+            .show();
         } else if (!contraseñaTV.getText().toString().equals(
                 repetirContraseñaTV.getText().toString())
         ) {
-            Log.d("CrearCuentaFragment", "Contraseñas iguales = true");
-            Toast.makeText(
-                            requireContext(),
-                            getString(R.string.toast_contraseñas_no_coinciden),
-                            Toast.LENGTH_SHORT)
-                    .show();
-            return false;
-        } else if (!contraseñaCumpleFormato()) {
-            return false;
-        } else {
             Toast.makeText(
                     requireContext(),
-                    getString(R.string.toast_cuenta_creada_con_exito),
-                    Toast.LENGTH_SHORT
-            ).show();
-            return true;
+                    getString(R.string.toast_contraseñas_no_coinciden),
+                    Toast.LENGTH_SHORT)
+            .show();
+        } else if (contraseñaCumpleFormato()) {
+            comprobarUsuarioValido(
+                    usuarioTV.getText().toString()
+            );
         }
-    }
-
-    /*
-     * En esta función, si hay algún usuario que cumpla las características de la consulta
-     * (cantidadUsuarios = 1) significará que nombre de usuario no es válido.
-     */
-    private boolean usuarioValido(String pUsuario) {
-        /*
-        SELECT COUNT(*) FROM Usuario
-        WHERE nombre_usuario = ?
-         */
-        String[] campos = new String[] {"COUNT(*)"};
-        String[] argumentos = new String[] {pUsuario};
-        Cursor cUsuario = baseDeDatos.query("Usuario", campos, "nombre_usuario = ?",
-                argumentos, null, null, null);
-
-        cUsuario.moveToFirst();
-        int cantidadUsuarios = cUsuario.getInt(0);
-        cUsuario.close();
-        return cantidadUsuarios != 1;
     }
 
     /* Para la validación de la contraseña se ha utlizado de base el código que podemos encontrar
@@ -197,36 +136,150 @@ public class CrearCuentaFragment extends Fragment {
         boolean cumplePatron = patronContraseña.matcher(contraseña).matches();
         if (contraseña.length() < 8) {
             Toast.makeText(
-                            requireContext(),
-                            getString(R.string.toast_minimo_8_caracteres),
-                            Toast.LENGTH_SHORT)
-                    .show();
+                    requireContext(),
+                    getString(R.string.toast_minimo_8_caracteres),
+                    Toast.LENGTH_SHORT)
+            .show();
             return false;
         } else if (!cumplePatron) {
             Toast.makeText(
-                            requireContext(),
-                            getString(R.string.toast_formato_contraseña_invalido),
-                            Toast.LENGTH_SHORT)
-                    .show();
+                    requireContext(),
+                    getString(R.string.toast_formato_contraseña_invalido),
+                    Toast.LENGTH_SHORT)
+            .show();
             return false;
         } else {
             return true;
         }
     }
 
-    private void crearCuenta() {
-        BaseDeDatos gestorBD = new BaseDeDatos(requireContext(), "Euroliga",
-                null, 1);
-        SQLiteDatabase bd = gestorBD.getWritableDatabase();
-        ContentValues nuevoUsuario = new ContentValues();
-        nuevoUsuario.put("nombre_usuario", usuarioTV.getText().toString());
-        nuevoUsuario.put("contraseña", contraseñaTV.getText().toString());
-        bd.insert("Usuario", null, nuevoUsuario);
-        bd.close();
+    /*
+     * En esta función, se encola una tarea cuyo cometido es lanzar la siguiente consulta contra
+     * la base de datos remota (la tarea requiere de conexión a internet para poder acceder a la
+     * base de datos alojada en el servidor):
+     *
+     * SELECT COUNT(*) FROM Usuario
+     * WHERE nombre_usuario = ?
+     */
+    private void comprobarUsuarioValido(String pUsuario) {
+        Data parametros = new Data.Builder()
+                .putString("nombreUsuario", pUsuario)
+                .build();
 
-        iniciarSesion(usuarioTV.getText().toString());
+        Constraints restricciones = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        OneTimeWorkRequest otwr = new OneTimeWorkRequest.Builder(ExisteUsuario.class)
+                .setConstraints(restricciones)
+                .setInputData(parametros)
+                .build();
+
+        WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(otwr.getId())
+                .observe(this, new Observer<WorkInfo>() {
+
+                    /*
+                     *
+                     * Una vez completada la consulta, se comprueba el resultado de la consulta.
+                     * En caso de cumplirse la condición 'cantidadUsuarios == 1' se procede a
+                     * completar el proceso de creación de cuenta.
+                     */
+                    @Override
+                    public void onChanged(WorkInfo workInfo) {
+                        if(workInfo != null && workInfo.getState().isFinished()) {
+                            String cantidadUsuariosStr = workInfo.getOutputData()
+                                    .getString("cantidadUsuarios");
+                            if (cantidadUsuariosStr != null) {
+                                int cantidadUsuarios = Integer.parseInt(cantidadUsuariosStr);
+                                if (cantidadUsuarios == 1) { // El nombre de usuario EXISTE
+                                    Toast.makeText(
+                                            requireContext(),
+                                            getString(R.string.toast_nombre_usuario_existente),
+                                            Toast.LENGTH_SHORT)
+                                    .show();
+                                } else { // El nombre de usuario NO EXISTE
+                                    crearCuenta(
+                                            usuarioTV.getText().toString(),
+                                            contraseñaTV.getText().toString()
+                                    );
+                                }
+                            }
+                        }
+                    }
+                });
+
+        WorkManager.getInstance(requireContext()).enqueue(otwr);
     }
 
+    /*
+     * En esta función, se encola una tarea cuyo cometido es lanzar la siguiente consulta contra
+     * la base de datos remota (la tarea requiere de conexión a internet para poder acceder a la
+     * base de datos alojada en el servidor):
+     *
+     * INSERT INTO Usuario (nombre_usuario, contraseña)
+     * VALUES (?, ?)
+     */
+    private void crearCuenta(String pUsuario, String pContraseña) {
+        Data parametros = new Data.Builder()
+                .putString("nombreUsuario", pUsuario)
+                .putString("contraseña", pContraseña)
+                .build();
+
+        Constraints restricciones = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        OneTimeWorkRequest otwr2 = new OneTimeWorkRequest.Builder(InsertarUsuario.class)
+                .setConstraints(restricciones)
+                .setInputData(parametros)
+                .build();
+
+        WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(otwr2.getId())
+                .observe(this, new Observer<WorkInfo>() {
+
+                    /*
+                     * Una vez completada la consulta, se comprueba el resultado de la consulta.
+                     * Si se da la condición 'consultaExitosa == 1' se procede a completar el
+                     * proceso de creación de cuenta, se inicia sesión y accedemos a
+                     * 'MenuPrincipalFragment'.
+                     */
+                    @Override
+                    public void onChanged(WorkInfo workInfo2) {
+                        if(workInfo2 != null && workInfo2.getState().isFinished()) {
+                            String consultaExitosaStr = workInfo2.getOutputData()
+                                    .getString("consultaExitosa");
+                            if (consultaExitosaStr != null) {
+                                int consultaExitosa = Integer.parseInt(consultaExitosaStr);
+                                Log.d("CrearCuentaFragment", consultaExitosaStr);
+                                if (consultaExitosa == 1) { // La consulta ha sido EXITOSA
+                                    Toast.makeText(
+                                            requireContext(),
+                                            getString(R.string.toast_cuenta_creada_con_exito),
+                                            Toast.LENGTH_SHORT)
+                                    .show();
+                                    iniciarSesion(usuarioTV.getText().toString());
+                                    navegarHaciaMenuPrincipal();
+                                } else { // Ha ocurrido un ERROR en la consulta
+                                    Toast.makeText(
+                                            requireContext(),
+                                            getString(R.string.toast_creacion_cuenta_error),
+                                            Toast.LENGTH_SHORT)
+                                    .show();
+                                }
+                            }
+                        }
+                    }
+                });
+
+        WorkManager.getInstance(requireContext()).enqueue(otwr2);
+    }
+
+    /*
+     * En esta función, se realiza el proceso de inicio de sesión guardando el nombre de usuario
+     * del usuario que acaba de iniciar sesión en un archivo de preferencias. Este archivo se
+     * utiliza en el método 'onStart' de la clase 'LoginFragment' para iniciar la sesión de
+     * forma automática en caso de no haber cerrado la sesión.
+     */
     private void iniciarSesion(String pUsuario) {
         SharedPreferences preferencias = PreferenceManager
                 .getDefaultSharedPreferences(requireContext());
@@ -235,9 +288,9 @@ public class CrearCuentaFragment extends Fragment {
         editor.apply();
     }
 
-    private void navegarHaciaMenuPrincipal(View view) {
+    private void navegarHaciaMenuPrincipal() {
         NavDirections accion = CrearCuentaFragmentDirections
                 .actionCrearCuentaFragmentToMenuPrincipalFragment();
-        Navigation.findNavController(view).navigate(accion);
+        NavHostFragment.findNavController(this).navigate(accion);
     }
 }
