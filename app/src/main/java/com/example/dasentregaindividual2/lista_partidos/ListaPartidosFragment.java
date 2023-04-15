@@ -2,7 +2,6 @@ package com.example.dasentregaindividual2.lista_partidos;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +53,6 @@ public class ListaPartidosFragment extends Fragment {
         /* RECUPERAR DATOS DEL PARTIDO SELECCIONADO */
         if (getArguments() != null) {
             int cantidadEquiposFavoritos = getArguments().getInt("cantidadFavoritos");
-            Log.d("ListaPartidosFragment", String.valueOf(cantidadEquiposFavoritos));
             listenerListaPartidosFragment.borrarNotificaciones(cantidadEquiposFavoritos);
         }
 
@@ -90,6 +88,13 @@ public class ListaPartidosFragment extends Fragment {
         }
     }
 
+    /*
+     * En esta función, se encola una tarea cuyo cometido es lanzar la siguiente consulta contra
+     * la base de datos remota (la tarea requiere de conexión a internet para poder acceder a la
+     * base de datos alojada en el servidor):
+     *
+     * SELECT * FROM Partido
+     */
     private void recuperarListaDePartidos() {
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -124,7 +129,6 @@ public class ListaPartidosFragment extends Fragment {
                                             .getString("fecha");
                                     String hora = listaPartidosJSON.getJSONObject(i)
                                             .getString("hora");
-                                    Log.d("ListaPartidosFragment", partidoId + ", " + numJornada + ", " + fecha + ", " + hora);
                                     recuperarEquiposDeUnPartido(partidoId, numJornada, fecha, hora);
                                 }
                             } catch (JSONException e) {
@@ -137,6 +141,16 @@ public class ListaPartidosFragment extends Fragment {
         WorkManager.getInstance(requireContext()).enqueue(otwr);
     }
 
+    /*
+     * En esta función, se encola una tarea cuyo cometido es lanzar la siguiente consulta contra
+     * la base de datos remota (la tarea requiere de conexión a internet para poder acceder a la
+     * base de datos alojada en el servidor):
+     *
+     * SELECT j.puntos, j.partido_id, j.local, e.nombre, e.escudo_id, e.part_ganados_ult_10,
+     * e.part_perdidos_ult_10
+     * FROM Juega AS j INNER JOIN Equipo AS e ON j.nombre_equipo = e.nombre
+     * WHERE j.partido_id = ?
+     */
     private void recuperarEquiposDeUnPartido(
             String partidoId,
             Integer numJornada,
@@ -171,7 +185,6 @@ public class ListaPartidosFragment extends Fragment {
                             try {
                                 String listaEquiposPartidoStr = workInfo.getOutputData()
                                         .getString("listaEquiposPartido");
-                                Log.d("ListaPartidosFragment", listaEquiposPartidoStr);
                                 JSONArray listaEquiposPartidoJSON = new JSONArray(
                                         listaEquiposPartidoStr);
                                 EquipoPartido[] equiposPartido = new EquipoPartido[2];
@@ -203,7 +216,6 @@ public class ListaPartidosFragment extends Fragment {
                                     }
                                 }
                                 Partido partidoJornada = new Partido(equiposPartido, fecha, hora);
-                                Log.d("ListaPartidosFragment", partidoJornada.toString());
                                 listaPartidos[listaPartidosInd] = partidoJornada;
                                 listaPartidosInd++;
                                 if (listaPartidosInd == 9) {

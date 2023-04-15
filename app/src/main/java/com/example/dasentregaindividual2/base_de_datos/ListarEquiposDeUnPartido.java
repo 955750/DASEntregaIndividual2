@@ -2,7 +2,6 @@ package com.example.dasentregaindividual2.base_de_datos;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.work.Data;
@@ -78,8 +77,6 @@ public class ListarEquiposDeUnPartido extends Worker {
                         .putString("listaEquiposPartido", respuesta)
                         .build();
                 inputStream.close();
-
-                Log.d("ListarEquiposDeUnPartido", respuesta);
             }
         }  catch (IOException e) {
             throw new RuntimeException(e);

@@ -2,7 +2,6 @@ package com.example.dasentregaindividual2.base_de_datos.favorito;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.work.Data;
@@ -79,8 +78,6 @@ public class EsEquipoFavorito extends Worker {
                         .putString("esFavorito", respuesta)
                         .build();
                 inputStream.close();
-
-                Log.d("EsEquipoFavorito", respuesta);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

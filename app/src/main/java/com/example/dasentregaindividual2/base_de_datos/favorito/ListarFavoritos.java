@@ -2,15 +2,11 @@ package com.example.dasentregaindividual2.base_de_datos.favorito;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -19,7 +15,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 public class ListarFavoritos extends Worker {
 
@@ -75,13 +70,11 @@ public class ListarFavoritos extends Worker {
 
                 String respuesta = bufferedReader.readLine();
 
-                // Preparar los datos a devolver (mirar como parsear JSON)
+                // Preparar los datos a devolver
                 resultado = new Data.Builder()
                         .putString("equiposFavoritos", respuesta)
                         .build();
                 inputStream.close();
-
-                Log.d("ListarFavoritos", respuesta);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

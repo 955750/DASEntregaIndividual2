@@ -2,7 +2,6 @@ package com.example.dasentregaindividual2.base_de_datos.partido;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.work.Data;
@@ -68,7 +67,7 @@ public class ListarPartidos extends Worker {
 
                 String respuesta = bufferedReader.readLine();
 
-                // Preparar los datos a devolver (mirar como parsear JSON)
+                // Preparar los datos a devolver
                 resultado = new Data.Builder()
                         .putString("listaPartidos", respuesta)
                         .build();

@@ -1,9 +1,7 @@
 package com.example.dasentregaindividual2.login;
 
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -170,7 +168,6 @@ public class LoginFragment extends Fragment {
 
         WorkManager.getInstance(requireContext()).enqueue(otwr);
     }
-
 
     /*
      * En esta función, se realiza el proceso de inicio de sesión guardando el nombre de usuario

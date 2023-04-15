@@ -2,7 +2,6 @@ package com.example.dasentregaindividual2.base_de_datos.usuario;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.work.Data;
@@ -51,8 +50,6 @@ public class InsertarUsuario extends Worker {
             // Añadir parámetros a la llamada HTTP
             String nombreUsuario = getInputData().getString("nombreUsuario");
             String contraseña = getInputData().getString("contraseña");
-            Log.d("InsertarUsuario", "Usuario = " + nombreUsuario);
-            Log.d("InsertarUsuario", "Contraseña = " + contraseña);
             String opcion = "3";
             Uri.Builder builder = new Uri.Builder()
                     .appendQueryParameter("nombreUsuario", nombreUsuario)

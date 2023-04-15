@@ -63,6 +63,7 @@ public class MenuPrincipalFragment extends Fragment {
         void crearNotificacionesPartido(ArrayList<String> listaEquiposFavoritos);
     }
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +95,6 @@ public class MenuPrincipalFragment extends Fragment {
             }
         });
 
-        // crearNotificacionPartido();
         obtenerEquiposFavoritos();
     }
 
@@ -209,8 +209,8 @@ public class MenuPrincipalFragment extends Fragment {
 
                     /*
                      * Una vez completada la consulta, se comprueba el resultado de la consulta.
-                     * Si se da la condición 'cantidadUsuarios == 1' se procede a completar el
-                     * proceso de inicio de sesión
+                     * Si se da la condición 'cantidadUsuarios == 1' se procede a obtener los
+                     * equipos favoritos y lanzar notificaciones por cada uno de ellos
                      */
                     @Override
                     public void onChanged(WorkInfo workInfo) {

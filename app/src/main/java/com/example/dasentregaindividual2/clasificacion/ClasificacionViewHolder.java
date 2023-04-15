@@ -1,10 +1,7 @@
 package com.example.dasentregaindividual2.clasificacion;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,10 +20,8 @@ import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.example.dasentregaindividual2.R;
-import com.example.dasentregaindividual2.base_de_datos.BaseDeDatos;
 import com.example.dasentregaindividual2.base_de_datos.favorito.AñadirFavorito;
 import com.example.dasentregaindividual2.base_de_datos.favorito.EliminarFavorito;
-import com.example.dasentregaindividual2.base_de_datos.usuario.InsertarUsuario;
 import com.google.android.material.card.MaterialCardView;
 
 public class ClasificacionViewHolder extends RecyclerView.ViewHolder {

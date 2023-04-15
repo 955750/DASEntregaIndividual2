@@ -1,9 +1,6 @@
 package com.example.dasentregaindividual2.crear_cuenta;
 
-import android.content.ContentValues;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,7 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.navigation.NavDirections;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.preference.PreferenceManager;
 import androidx.work.Constraints;
@@ -28,8 +24,6 @@ import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.example.dasentregaindividual2.R;
-import com.example.dasentregaindividual2.base_de_datos.BaseDeDatos;
-import com.example.dasentregaindividual2.base_de_datos.usuario.ExisteParUsuarioContraseña;
 import com.example.dasentregaindividual2.base_de_datos.usuario.ExisteUsuario;
 import com.example.dasentregaindividual2.base_de_datos.usuario.InsertarUsuario;
 import com.google.android.material.textfield.TextInputEditText;
@@ -65,11 +59,11 @@ public class CrearCuentaFragment extends Fragment {
         crearCuenta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // crearUsuarioYHacerLogin(view);
                 comprobarCampos();
             }
         });
     }
+
     /*
      * En esta función, primero se comprueba si alguno de los 3 campos está vacío. Si ninguno de
      * ellos está vacío, primero si el contenido de los 2 campos de contraseña coincide y en caso
@@ -179,7 +173,6 @@ public class CrearCuentaFragment extends Fragment {
                 .observe(this, new Observer<WorkInfo>() {
 
                     /*
-                     *
                      * Una vez completada la consulta, se comprueba el resultado de la consulta.
                      * En caso de cumplirse la condición 'cantidadUsuarios == 1' se procede a
                      * completar el proceso de creación de cuenta.
@@ -250,7 +243,6 @@ public class CrearCuentaFragment extends Fragment {
                                     .getString("consultaExitosa");
                             if (consultaExitosaStr != null) {
                                 int consultaExitosa = Integer.parseInt(consultaExitosaStr);
-                                Log.d("CrearCuentaFragment", consultaExitosaStr);
                                 if (consultaExitosa == 1) { // La consulta ha sido EXITOSA
                                     Toast.makeText(
                                             requireContext(),

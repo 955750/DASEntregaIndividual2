@@ -2,7 +2,6 @@ package com.example.dasentregaindividual2.base_de_datos.equipo;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.work.Data;
@@ -69,13 +68,11 @@ public class ListarEquiposOrdenAscDerrotas extends Worker {
 
                 String respuesta = bufferedReader.readLine();
 
-                // Preparar los datos a devolver (mirar como parsear JSON)
+                // Preparar los datos a devolver
                 resultado = new Data.Builder()
                         .putString("listaEquipos", respuesta)
                         .build();
                 inputStream.close();
-
-                Log.d("ListarEquiposOrdenAscDerrotas", respuesta);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

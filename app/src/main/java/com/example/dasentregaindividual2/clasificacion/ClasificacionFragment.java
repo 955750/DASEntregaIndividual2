@@ -1,14 +1,10 @@
 package com.example.dasentregaindividual2.clasificacion;
 
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,13 +20,9 @@ import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.example.dasentregaindividual2.R;
-import com.example.dasentregaindividual2.base_de_datos.BaseDeDatos;
 import com.example.dasentregaindividual2.base_de_datos.equipo.ListarEquiposOrdenAscDerrotas;
 import com.example.dasentregaindividual2.base_de_datos.favorito.EsEquipoFavorito;
 import com.example.dasentregaindividual2.base_de_datos.modelos.EquipoClasificacion;
-import com.example.dasentregaindividual2.base_de_datos.partido.ListarPartidos;
-import com.example.dasentregaindividual2.base_de_datos.usuario.ExisteParUsuarioContraseña;
-import com.example.dasentregaindividual2.lista_partidos.ListaPartidosAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -105,24 +97,25 @@ public class ClasificacionFragment extends Fragment {
                                     int posicion = i + 1;
                                     String nombre = listaEquiposJSON.getJSONObject(i)
                                             .getString("nombre");
-                                    int escudoId = Integer.parseInt(listaEquiposJSON.getJSONObject(i)
-                                            .getString("escudoId"));
-                                    int partGanTot = Integer.parseInt(listaEquiposJSON.getJSONObject(i)
-                                            .getString("partGanTot"));
-                                    int partPerdTot = Integer.parseInt(listaEquiposJSON.getJSONObject(i)
-                                            .getString("partPerdTot"));
-                                    int puntFavor = Integer.parseInt(listaEquiposJSON.getJSONObject(i)
-                                            .getString("puntFavor"));
-                                    int puntContra = Integer.parseInt(listaEquiposJSON.getJSONObject(i)
-                                            .getString("puntContra"));
-                                    int partGanUlt10 = Integer.parseInt(listaEquiposJSON.getJSONObject(i)
-                                            .getString("partGanUlt10"));
-                                    int partPerUlt10 = Integer.parseInt(listaEquiposJSON.getJSONObject(i)
-                                            .getString("partPerUlt10"));
+                                    int escudoId = Integer.parseInt(listaEquiposJSON
+                                            .getJSONObject(i).getString("escudoId"));
+                                    int partGanTot = Integer.parseInt(listaEquiposJSON
+                                            .getJSONObject(i).getString("partGanTot"));
+                                    int partPerdTot = Integer.parseInt(listaEquiposJSON
+                                            .getJSONObject(i).getString("partPerdTot"));
+                                    int puntFavor = Integer.parseInt(listaEquiposJSON
+                                            .getJSONObject(i).getString("puntFavor"));
+                                    int puntContra = Integer.parseInt(listaEquiposJSON
+                                            .getJSONObject(i).getString("puntContra"));
+                                    int partGanUlt10 = Integer.parseInt(listaEquiposJSON
+                                            .getJSONObject(i).getString("partGanUlt10"));
+                                    int partPerUlt10 = Integer.parseInt(listaEquiposJSON
+                                            .getJSONObject(i).getString("partPerUlt10"));
 
                                     EquipoClasificacion equipo = new EquipoClasificacion(
-                                            posicion, escudoId, nombre, partGanTot, partPerdTot, puntFavor, puntContra,
-                                            partGanUlt10, partPerUlt10, false
+                                            posicion, escudoId, nombre, partGanTot, partPerdTot,
+                                            puntFavor, puntContra, partGanUlt10, partPerUlt10,
+                                            false
                                     );
                                     recuperarEquiposFavoritos(equipo);
                                 }
