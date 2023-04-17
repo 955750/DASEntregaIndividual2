@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.INTERNET"/>
 
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -15,6 +16,7 @@
         android:theme="@style/Theme.DASEntregaIndividual2"
         tools:targetApi="31"
         android:usesCleartextTraffic="true">
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -23,7 +25,20 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="AVISO" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
-    </application>
 
+        <service
+            android:name=".firebase.ServicioFirebase"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+    </application>
 </manifest>

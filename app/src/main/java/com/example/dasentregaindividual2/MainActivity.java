@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -42,6 +43,15 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        /* Se reciben los datos que acompañan a la notificación FCM */
+        if (getIntent().getExtras() != null) {
+            String mensaje = getIntent().getExtras().getString("mensaje");
+            String fecha = getIntent().getExtras().getString("fecha");
+
+            Log.d("MainActivity", "mensaje --> " + mensaje);
+            Log.d("MainActivity", "fecha --> " + fecha);
+        }
 
         solicitarPermisosNotificaciones();
 
