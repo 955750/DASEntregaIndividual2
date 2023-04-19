@@ -1,3 +1,4 @@
+/*
 package com.example.dasentregaindividual2.firebase;
 
 import android.util.Log;
@@ -11,7 +12,8 @@ public class ServicioFirebase extends FirebaseMessagingService {
 
     }
 
-    /*
+    */
+/*
      * APK en primer plano --> Se ejecuta el método; NO se muestra notificación (a no ser que la
      * programemos nosotros)
      *
@@ -23,7 +25,8 @@ public class ServicioFirebase extends FirebaseMessagingService {
      *
      *      + Tipo DATOS -->
      *          - Se ejecuta el método
-     */
+     *//*
+
     public void onMessageReceived(RemoteMessage remoteMessage) {
         if (remoteMessage.getData().size() > 0) { // Si el mensaje viene con datos
             Log.d("ServicioFirebase", remoteMessage.getData().toString());
@@ -34,9 +37,11 @@ public class ServicioFirebase extends FirebaseMessagingService {
         }
     }
 
-    /*
+    */
+/*
      * Qué hacer cada vez que se genere un token para el dispositivo
-     */
+     *//*
+
     @Override
     public void onNewToken(String s) {
         super.onNewToken(s);
@@ -46,3 +51,4 @@ public class ServicioFirebase extends FirebaseMessagingService {
 
 
 }
+*/

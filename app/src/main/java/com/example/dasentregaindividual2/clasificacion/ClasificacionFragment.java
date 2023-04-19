@@ -2,6 +2,7 @@ package com.example.dasentregaindividual2.clasificacion;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import com.example.dasentregaindividual2.R;
 import com.example.dasentregaindividual2.base_de_datos.equipo.ListarEquiposOrdenAscDerrotas;
 import com.example.dasentregaindividual2.base_de_datos.favorito.EsEquipoFavorito;
 import com.example.dasentregaindividual2.base_de_datos.modelos.EquipoClasificacion;
+import com.example.dasentregaindividual2.servidor.otros.RecuperarEscudoEquipo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -97,8 +99,6 @@ public class ClasificacionFragment extends Fragment {
                                     int posicion = i + 1;
                                     String nombre = listaEquiposJSON.getJSONObject(i)
                                             .getString("nombre");
-                                    int escudoId = Integer.parseInt(listaEquiposJSON
-                                            .getJSONObject(i).getString("escudoId"));
                                     int partGanTot = Integer.parseInt(listaEquiposJSON
                                             .getJSONObject(i).getString("partGanTot"));
                                     int partPerdTot = Integer.parseInt(listaEquiposJSON
@@ -113,11 +113,12 @@ public class ClasificacionFragment extends Fragment {
                                             .getJSONObject(i).getString("partPerUlt10"));
 
                                     EquipoClasificacion equipo = new EquipoClasificacion(
-                                            posicion, escudoId, nombre, partGanTot, partPerdTot,
+                                            posicion, null, nombre, partGanTot, partPerdTot,
                                             puntFavor, puntContra, partGanUlt10, partPerUlt10,
                                             false
                                     );
-                                    recuperarEquiposFavoritos(equipo);
+                                    recuperarEscudoEquipo(equipo);
+                                    // recuperarEquiposFavoritos(equipo);
                                 }
                             } catch (JSONException e) {
                                 throw new RuntimeException(e);
@@ -129,6 +130,64 @@ public class ClasificacionFragment extends Fragment {
         WorkManager.getInstance(requireContext()).enqueue(otwr);
     }
 
+    private void recuperarEscudoEquipo(EquipoClasificacion eq) {
+        Data parametros = new Data.Builder()
+                .putString("nombreEquipo", eq.getNombre())
+                .build();
+
+        Constraints restricciones = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        OneTimeWorkRequest otwr2 = new OneTimeWorkRequest.Builder(RecuperarEscudoEquipo.class)
+                .setConstraints(restricciones)
+                .setInputData(parametros)
+                .build();
+
+        WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(otwr2.getId())
+                .observe(this, new Observer<WorkInfo>() {
+
+                    /*
+                     * Una vez completada la consulta, se comprueba el resultado de la consulta.
+                     * Si se da la condición 'esFavorito == 1' el valor 'pEsFavorito' de la clase
+                     * modelo 'EquipoClasificacion' pasa a ser 'true'. Una vez definido ese valor
+                     * se procede a añadir el equipo a la lista.
+                     */
+                    @Override
+                    public void onChanged(WorkInfo workInfo) {
+                        if (workInfo != null && workInfo.getState().isFinished()) {
+                            String escudoEquipo = workInfo.getOutputData()
+                                    .getString("escudoEquipo");
+                            Log.d("ClasificacionFragment", escudoEquipo);
+                            if (escudoEquipo != null) {
+                                EquipoClasificacion equipoConEscudo = new EquipoClasificacion(
+                                    eq.getPosicion(), escudoEquipo, eq.getNombre(),
+                                    eq.getPartidosGanadosTotales(),
+                                    eq.getPartidosPerdidosTotales(),
+                                    eq.getPuntosFavorTotales(),
+                                    eq.getPuntosContraTotales(),
+                                    eq.getPartidosGanadosUltimos10(),
+                                    eq.getPartidosPerdidosUltimos10(),
+                                    false
+                                );
+                                    listaEquipos[listaEquiposInd] = equipoConEscudo;
+                            } else { // ERROR AL OBTENER ESCUDO
+                                listaEquipos[listaEquiposInd] = eq;
+                            }
+
+                            listaEquiposInd++;
+                            if (listaEquiposInd == 18) {
+                                clasificacionRecyclerView.setAdapter(
+                                        new ClasificacionAdapter(listaEquipos)
+                                );
+                            }
+                        }
+                    }
+                });
+
+        WorkManager.getInstance(requireContext()).enqueue(otwr2);
+    }
+
     /*
      * En esta función, se encola una tarea cuyo cometido es lanzar la siguiente consulta contra
      * la base de datos remota (la tarea requiere de conexión a internet para poder acceder a la
@@ -138,7 +197,7 @@ public class ClasificacionFragment extends Fragment {
      * WHERE nombre_usuario = ?
      * AND nombre_equipo = ?
      */
-    private void recuperarEquiposFavoritos(EquipoClasificacion eq) {
+    /*private void recuperarEquiposFavoritos(EquipoClasificacion eq) {
         SharedPreferences preferencias = PreferenceManager
                 .getDefaultSharedPreferences(requireContext());
         String usuario = preferencias.getString("usuario", null);
@@ -160,12 +219,12 @@ public class ClasificacionFragment extends Fragment {
         WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(otwr2.getId())
                 .observe(this, new Observer<WorkInfo>() {
 
-                    /*
+                    *//*
                      * Una vez completada la consulta, se comprueba el resultado de la consulta.
                      * Si se da la condición 'esFavorito == 1' el valor 'pEsFavorito' de la clase
                      * modelo 'EquipoClasificacion' pasa a ser 'true'. Una vez definido ese valor
                      * se procede a añadir el equipo a la lista.
-                     */
+                     *//*
                     @Override
                     public void onChanged(WorkInfo workInfo) {
                         if (workInfo != null && workInfo.getState().isFinished()) {
@@ -201,5 +260,5 @@ public class ClasificacionFragment extends Fragment {
                 });
 
         WorkManager.getInstance(requireContext()).enqueue(otwr2);
-    }
+    }*/
 }

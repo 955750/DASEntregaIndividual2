@@ -2,20 +2,20 @@ package com.example.dasentregaindividual2.base_de_datos.modelos;
 
 public class EquipoClasificacion {
 
-    private int posicion, escudoId, partidosGanadosTotales, partidosPerdidosTotales,
+    private int posicion, partidosGanadosTotales, partidosPerdidosTotales,
         puntosFavorTotales, puntosContraTotales, partidosGanadosUltimos10,
         partidosPerdidosUltimos10;
     private boolean esFavorito;
-    private String nombre;
+    private String nombre, escudoBase64;
 
 
     public EquipoClasificacion(
-        int pPosicion, int pEscudo, String pNombre, int pPartidosGanadosTotales,
+        int pPosicion, String pEscudoBase64, String pNombre, int pPartidosGanadosTotales,
         int pPartidosPerdidosTotales, int pPuntosFavorTotales, int pPuntosContraTotales,
         int pPartidosGanadosUltimos10, int pPartidosPerdidosUltimos10, boolean pEsFavorito
     ) {
         this.posicion = pPosicion;
-        this.escudoId = pEscudo;
+        this.escudoBase64 = pEscudoBase64;
         this.nombre = pNombre;
         this.partidosGanadosTotales = pPartidosGanadosTotales;
         this.partidosPerdidosTotales = pPartidosPerdidosTotales;
@@ -30,8 +30,8 @@ public class EquipoClasificacion {
         return posicion;
     }
 
-    public int getEscudoId() {
-        return escudoId;
+    public String getEscudoBase64() {
+        return escudoBase64;
     }
 
     public int getPartidosGanadosTotales() {

@@ -1,6 +1,9 @@
 package com.example.dasentregaindividual2.clasificacion;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +43,18 @@ public class ClasificacionAdapter extends RecyclerView.Adapter<ClasificacionView
         return clasificacionViewHolder;
     }
 
+    private Bitmap base64StringToBitmap(String base64String) {
+        try{
+            byte [] encodeByte = Base64.decode(base64String,Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        }
+        catch(Exception e){
+            e.getMessage();
+            return null;
+        }
+    }
+
     @Override
     public void onBindViewHolder(@NonNull ClasificacionViewHolder holder, int position) {
         Context context = holder.itemView.getContext();
@@ -47,7 +62,8 @@ public class ClasificacionAdapter extends RecyclerView.Adapter<ClasificacionView
         /* Cargar datos del equipo correspondiente */
         EquipoClasificacion equipoActual = clasificacion[position];
         holder.posicionClasifacionTV.setText(String.valueOf(equipoActual.getPosicion()));
-        holder.escudoIV.setImageResource(equipoActual.getEscudoId());
+        String escudoBase64 = equipoActual.getEscudoBase64();
+        holder.escudoIV.setImageBitmap(base64StringToBitmap(escudoBase64));
         holder.nombreEquipoTV.setText(equipoActual.getNombre());
         holder.partidosGanadosTotalesTV.setText(String.valueOf(equipoActual
             .getPartidosGanadosTotales()));

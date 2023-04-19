@@ -62,7 +62,7 @@
                     android:layout_height="60dp"
                     android:layout_margin="5dp"
                     android:layout_gravity="center"
-                    app:srcCompat="@drawable/escudo_baskonia" />
+                    tools:srcCompat="@drawable/escudo_baskonia" />
 
             </com.google.android.material.card.MaterialCardView>
 
