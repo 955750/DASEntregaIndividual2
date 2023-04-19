@@ -1,4 +1,4 @@
-package com.example.dasentregaindividual2.servidor.otros;
+package com.example.dasentregaindividual2.servidor.base_de_datos.equipo;
 
 import android.content.Context;
 import android.graphics.Bitmap;

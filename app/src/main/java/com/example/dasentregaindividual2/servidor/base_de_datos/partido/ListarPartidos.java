@@ -1,4 +1,4 @@
-package com.example.dasentregaindividual2.base_de_datos.usuario;
+package com.example.dasentregaindividual2.servidor.base_de_datos.partido;
 
 import android.content.Context;
 import android.net.Uri;
@@ -16,24 +16,22 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class ExisteParUsuarioContraseña extends Worker {
+public class ListarPartidos extends Worker {
 
-    public ExisteParUsuarioContraseña(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+    public ListarPartidos(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
 
     /*
      * En esta función se ejecuta la siguiente consulta de forma asíncrona:
      *
-     * SELECT COUNT(*) FROM Usuario
-     * WHERE nombre_usuario = ? AND
-     * contraseña = ?
+     * SELECT * FROM Partido
      */
     @NonNull
     @Override
     public Result doWork() {
         String direccion = "http://ec2-54-93-62-124.eu-central-1.compute.amazonaws.com/" +
-                           "jfuentes019/WEB/Entrega%20Individual%202/consultas_usuario.php";
+                "jfuentes019/WEB/Entrega%20Individual%202/consultas_partido.php";
 
         HttpURLConnection urlConnection;
         Data resultado = null;
@@ -49,12 +47,8 @@ public class ExisteParUsuarioContraseña extends Worker {
             urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
             // Añadir parámetros a la llamada HTTP
-            String nombreUsuario = getInputData().getString("nombreUsuario");
-            String contraseña = getInputData().getString("contraseña");
             String opcion = "1";
             Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("nombreUsuario", nombreUsuario)
-                    .appendQueryParameter("contraseña", contraseña)
                     .appendQueryParameter("opcion", opcion);
             String parametros = builder.build().getEncodedQuery();
 
@@ -75,11 +69,11 @@ public class ExisteParUsuarioContraseña extends Worker {
 
                 // Preparar los datos a devolver
                 resultado = new Data.Builder()
-                    .putString("cantidadUsuarios", respuesta)
-                    .build();
+                        .putString("listaPartidos", respuesta)
+                        .build();
                 inputStream.close();
             }
-        } catch (IOException e) {
+        }  catch (IOException e) {
             throw new RuntimeException(e);
         }
 

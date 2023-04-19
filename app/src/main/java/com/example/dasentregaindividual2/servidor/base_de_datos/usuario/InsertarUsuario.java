@@ -1,4 +1,4 @@
-package com.example.dasentregaindividual2.base_de_datos;
+package com.example.dasentregaindividual2.servidor.base_de_datos.usuario;
 
 import android.content.Context;
 import android.net.Uri;
@@ -16,25 +16,23 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class ListarEquiposDeUnPartido extends Worker {
+public class InsertarUsuario extends Worker {
 
-    public ListarEquiposDeUnPartido(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+    public InsertarUsuario(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
 
     /*
      * En esta función se ejecuta la siguiente consulta de forma asíncrona:
      *
-     * SELECT j.puntos, j.partido_id, j.local, e.nombre, e.escudo_id, e.part_ganados_ult_10,
-     * e.part_perdidos_ult_10
-     * FROM Juega AS j INNER JOIN Equipo AS e ON j.nombre_equipo = e.nombre
-     * WHERE j.partido_id = ?
+     * INSERT INTO Usuario (nombre_usuario, contraseña)
+     * VALUES (?, ?)
      */
     @NonNull
     @Override
     public Result doWork() {
         String direccion = "http://ec2-54-93-62-124.eu-central-1.compute.amazonaws.com/" +
-                "jfuentes019/WEB/Entrega%20Individual%202/consultas_varias_tablas.php";
+                "jfuentes019/WEB/Entrega%20Individual%202/consultas_usuario.php";
 
         HttpURLConnection urlConnection;
         Data resultado = null;
@@ -50,10 +48,12 @@ public class ListarEquiposDeUnPartido extends Worker {
             urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
             // Añadir parámetros a la llamada HTTP
-            String partidoId = getInputData().getString("partidoId");
-            String opcion = "1";
+            String nombreUsuario = getInputData().getString("nombreUsuario");
+            String contraseña = getInputData().getString("contraseña");
+            String opcion = "3";
             Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("partidoId", partidoId)
+                    .appendQueryParameter("nombreUsuario", nombreUsuario)
+                    .appendQueryParameter("contraseña", contraseña)
                     .appendQueryParameter("opcion", opcion);
             String parametros = builder.build().getEncodedQuery();
 
@@ -74,11 +74,11 @@ public class ListarEquiposDeUnPartido extends Worker {
 
                 // Preparar los datos a devolver
                 resultado = new Data.Builder()
-                        .putString("listaEquiposPartido", respuesta)
+                        .putString("consultaExitosa", respuesta)
                         .build();
                 inputStream.close();
             }
-        }  catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 

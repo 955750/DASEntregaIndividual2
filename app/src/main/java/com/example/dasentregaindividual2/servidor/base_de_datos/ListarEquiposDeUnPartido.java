@@ -1,4 +1,4 @@
-package com.example.dasentregaindividual2.base_de_datos.partido;
+package com.example.dasentregaindividual2.servidor.base_de_datos;
 
 import android.content.Context;
 import android.net.Uri;
@@ -16,22 +16,25 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class ListarPartidos extends Worker {
+public class ListarEquiposDeUnPartido extends Worker {
 
-    public ListarPartidos(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+    public ListarEquiposDeUnPartido(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
 
     /*
      * En esta función se ejecuta la siguiente consulta de forma asíncrona:
      *
-     * SELECT * FROM Partido
+     * SELECT j.puntos, j.partido_id, j.local, e.nombre, e.escudo_id, e.part_ganados_ult_10,
+     * e.part_perdidos_ult_10
+     * FROM Juega AS j INNER JOIN Equipo AS e ON j.nombre_equipo = e.nombre
+     * WHERE j.partido_id = ?
      */
     @NonNull
     @Override
     public Result doWork() {
         String direccion = "http://ec2-54-93-62-124.eu-central-1.compute.amazonaws.com/" +
-                "jfuentes019/WEB/Entrega%20Individual%202/consultas_partido.php";
+                "jfuentes019/WEB/Entrega%20Individual%202/consultas_varias_tablas.php";
 
         HttpURLConnection urlConnection;
         Data resultado = null;
@@ -47,8 +50,10 @@ public class ListarPartidos extends Worker {
             urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
             // Añadir parámetros a la llamada HTTP
+            String partidoId = getInputData().getString("partidoId");
             String opcion = "1";
             Uri.Builder builder = new Uri.Builder()
+                    .appendQueryParameter("partidoId", partidoId)
                     .appendQueryParameter("opcion", opcion);
             String parametros = builder.build().getEncodedQuery();
 
@@ -69,7 +74,7 @@ public class ListarPartidos extends Worker {
 
                 // Preparar los datos a devolver
                 resultado = new Data.Builder()
-                        .putString("listaPartidos", respuesta)
+                        .putString("listaEquiposPartido", respuesta)
                         .build();
                 inputStream.close();
             }

@@ -2,7 +2,6 @@ package com.example.dasentregaindividual2.crear_cuenta;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +23,8 @@ import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.example.dasentregaindividual2.R;
-import com.example.dasentregaindividual2.base_de_datos.usuario.ExisteUsuario;
-import com.example.dasentregaindividual2.base_de_datos.usuario.InsertarUsuario;
+import com.example.dasentregaindividual2.servidor.base_de_datos.usuario.ExisteUsuario;
+import com.example.dasentregaindividual2.servidor.base_de_datos.usuario.InsertarUsuario;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.regex.Pattern;

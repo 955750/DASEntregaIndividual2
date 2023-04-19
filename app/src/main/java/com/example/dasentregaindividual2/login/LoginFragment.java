@@ -24,7 +24,7 @@ import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.example.dasentregaindividual2.R;
-import com.example.dasentregaindividual2.base_de_datos.usuario.ExisteParUsuarioContraseña;
+import com.example.dasentregaindividual2.servidor.base_de_datos.usuario.ExisteParUsuarioContraseña;
 import com.google.android.material.textfield.TextInputEditText;
 
 

@@ -9,8 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.dasentregaindividual2.R;
-import com.example.dasentregaindividual2.base_de_datos.modelos.EquipoPartido;
-import com.example.dasentregaindividual2.base_de_datos.modelos.Partido;
+import com.example.dasentregaindividual2.servidor.base_de_datos.modelos.EquipoPartido;
+import com.example.dasentregaindividual2.servidor.base_de_datos.modelos.Partido;
 
 public class ListaPartidosAdapter extends RecyclerView.Adapter<ListaPartidosViewHolder> {
 

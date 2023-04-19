@@ -20,8 +20,8 @@ import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.example.dasentregaindividual2.R;
-import com.example.dasentregaindividual2.base_de_datos.favorito.AñadirFavorito;
-import com.example.dasentregaindividual2.base_de_datos.favorito.EliminarFavorito;
+import com.example.dasentregaindividual2.servidor.base_de_datos.favorito.AñadirFavorito;
+import com.example.dasentregaindividual2.servidor.base_de_datos.favorito.EliminarFavorito;
 import com.google.android.material.card.MaterialCardView;
 
 public class ClasificacionViewHolder extends RecyclerView.ViewHolder {

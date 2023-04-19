@@ -1,6 +1,5 @@
 package com.example.dasentregaindividual2.clasificacion;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.Constraints;
 import androidx.work.Data;
@@ -21,10 +19,9 @@ import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.example.dasentregaindividual2.R;
-import com.example.dasentregaindividual2.base_de_datos.equipo.ListarEquiposOrdenAscDerrotas;
-import com.example.dasentregaindividual2.base_de_datos.favorito.EsEquipoFavorito;
-import com.example.dasentregaindividual2.base_de_datos.modelos.EquipoClasificacion;
-import com.example.dasentregaindividual2.servidor.otros.RecuperarEscudoEquipo;
+import com.example.dasentregaindividual2.servidor.base_de_datos.equipo.ListarEquiposOrdenAscDerrotas;
+import com.example.dasentregaindividual2.servidor.base_de_datos.modelos.EquipoClasificacion;
+import com.example.dasentregaindividual2.servidor.base_de_datos.equipo.RecuperarEscudoEquipo;
 
 import org.json.JSONArray;
 import org.json.JSONException;

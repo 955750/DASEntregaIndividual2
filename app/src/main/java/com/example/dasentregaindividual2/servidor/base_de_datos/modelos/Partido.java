@@ -1,4 +1,4 @@
-package com.example.dasentregaindividual2.base_de_datos.modelos;
+package com.example.dasentregaindividual2.servidor.base_de_datos.modelos;
 
 import androidx.annotation.NonNull;
 

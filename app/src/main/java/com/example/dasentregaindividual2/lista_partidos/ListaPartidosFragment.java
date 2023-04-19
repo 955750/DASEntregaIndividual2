@@ -19,10 +19,10 @@ import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.example.dasentregaindividual2.R;
-import com.example.dasentregaindividual2.base_de_datos.ListarEquiposDeUnPartido;
-import com.example.dasentregaindividual2.base_de_datos.modelos.EquipoPartido;
-import com.example.dasentregaindividual2.base_de_datos.modelos.Partido;
-import com.example.dasentregaindividual2.base_de_datos.partido.ListarPartidos;
+import com.example.dasentregaindividual2.servidor.base_de_datos.ListarEquiposDeUnPartido;
+import com.example.dasentregaindividual2.servidor.base_de_datos.modelos.EquipoPartido;
+import com.example.dasentregaindividual2.servidor.base_de_datos.modelos.Partido;
+import com.example.dasentregaindividual2.servidor.base_de_datos.partido.ListarPartidos;
 
 import org.json.JSONArray;
 import org.json.JSONException;

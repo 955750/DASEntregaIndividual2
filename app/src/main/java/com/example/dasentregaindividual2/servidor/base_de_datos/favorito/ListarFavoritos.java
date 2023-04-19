@@ -1,4 +1,4 @@
-package com.example.dasentregaindividual2.base_de_datos.usuario;
+package com.example.dasentregaindividual2.servidor.base_de_datos.favorito;
 
 import android.content.Context;
 import android.net.Uri;
@@ -16,23 +16,23 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class InsertarUsuario extends Worker {
+public class ListarFavoritos extends Worker {
 
-    public InsertarUsuario(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+    public ListarFavoritos(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
 
     /*
      * En esta función se ejecuta la siguiente consulta de forma asíncrona:
      *
-     * INSERT INTO Usuario (nombre_usuario, contraseña)
-     * VALUES (?, ?)
+     * SELECT nombre_equipo FROM Favorito
+     * WHERE nombre_usuario = ?
      */
     @NonNull
     @Override
     public Result doWork() {
         String direccion = "http://ec2-54-93-62-124.eu-central-1.compute.amazonaws.com/" +
-                "jfuentes019/WEB/Entrega%20Individual%202/consultas_usuario.php";
+                "jfuentes019/WEB/Entrega%20Individual%202/consultas_favorito.php";
 
         HttpURLConnection urlConnection;
         Data resultado = null;
@@ -49,11 +49,9 @@ public class InsertarUsuario extends Worker {
 
             // Añadir parámetros a la llamada HTTP
             String nombreUsuario = getInputData().getString("nombreUsuario");
-            String contraseña = getInputData().getString("contraseña");
-            String opcion = "3";
+            String opcion = "1";
             Uri.Builder builder = new Uri.Builder()
                     .appendQueryParameter("nombreUsuario", nombreUsuario)
-                    .appendQueryParameter("contraseña", contraseña)
                     .appendQueryParameter("opcion", opcion);
             String parametros = builder.build().getEncodedQuery();
 
@@ -74,7 +72,7 @@ public class InsertarUsuario extends Worker {
 
                 // Preparar los datos a devolver
                 resultado = new Data.Builder()
-                        .putString("consultaExitosa", respuesta)
+                        .putString("equiposFavoritos", respuesta)
                         .build();
                 inputStream.close();
             }

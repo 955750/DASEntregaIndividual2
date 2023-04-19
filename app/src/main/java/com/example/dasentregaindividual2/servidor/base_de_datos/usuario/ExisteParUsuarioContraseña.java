@@ -1,4 +1,4 @@
-package com.example.dasentregaindividual2.base_de_datos.equipo;
+package com.example.dasentregaindividual2.servidor.base_de_datos.usuario;
 
 import android.content.Context;
 import android.net.Uri;
@@ -16,23 +16,24 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class ListarEquiposOrdenAscDerrotas extends Worker {
+public class ExisteParUsuarioContraseña extends Worker {
 
-    public ListarEquiposOrdenAscDerrotas(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+    public ExisteParUsuarioContraseña(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
 
     /*
      * En esta función se ejecuta la siguiente consulta de forma asíncrona:
      *
-     * SELECT * FROM Equipo
-     * ORDER BY part_perdidos_tot ASC
+     * SELECT COUNT(*) FROM Usuario
+     * WHERE nombre_usuario = ? AND
+     * contraseña = ?
      */
     @NonNull
     @Override
     public Result doWork() {
         String direccion = "http://ec2-54-93-62-124.eu-central-1.compute.amazonaws.com/" +
-                "jfuentes019/WEB/Entrega%20Individual%202/consultas_equipo.php";
+                           "jfuentes019/WEB/Entrega%20Individual%202/consultas_usuario.php";
 
         HttpURLConnection urlConnection;
         Data resultado = null;
@@ -48,8 +49,12 @@ public class ListarEquiposOrdenAscDerrotas extends Worker {
             urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
             // Añadir parámetros a la llamada HTTP
+            String nombreUsuario = getInputData().getString("nombreUsuario");
+            String contraseña = getInputData().getString("contraseña");
             String opcion = "1";
             Uri.Builder builder = new Uri.Builder()
+                    .appendQueryParameter("nombreUsuario", nombreUsuario)
+                    .appendQueryParameter("contraseña", contraseña)
                     .appendQueryParameter("opcion", opcion);
             String parametros = builder.build().getEncodedQuery();
 
@@ -70,8 +75,8 @@ public class ListarEquiposOrdenAscDerrotas extends Worker {
 
                 // Preparar los datos a devolver
                 resultado = new Data.Builder()
-                        .putString("listaEquipos", respuesta)
-                        .build();
+                    .putString("cantidadUsuarios", respuesta)
+                    .build();
                 inputStream.close();
             }
         } catch (IOException e) {

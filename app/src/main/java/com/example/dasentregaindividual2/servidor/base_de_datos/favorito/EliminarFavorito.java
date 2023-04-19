@@ -1,4 +1,4 @@
-package com.example.dasentregaindividual2.base_de_datos.favorito;
+package com.example.dasentregaindividual2.servidor.base_de_datos.favorito;
 
 import android.content.Context;
 import android.net.Uri;
@@ -16,16 +16,16 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class EsEquipoFavorito extends Worker {
+public class EliminarFavorito extends Worker {
 
-    public EsEquipoFavorito(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+    public EliminarFavorito(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
 
     /*
      * En esta función se ejecuta la siguiente consulta de forma asíncrona:
      *
-     * SELECT COUNT(*) FROM Favorito
+     * DELETE FROM Favorito
      * WHERE nombre_usuario = ?
      * AND nombre_equipo = ?
      */
@@ -51,7 +51,7 @@ public class EsEquipoFavorito extends Worker {
             // Añadir parámetros a la llamada HTTP
             String nombreUsuario = getInputData().getString("nombreUsuario");
             String nombreEquipo = getInputData().getString("nombreEquipo");
-            String opcion = "4";
+            String opcion = "3";
             Uri.Builder builder = new Uri.Builder()
                     .appendQueryParameter("nombreUsuario", nombreUsuario)
                     .appendQueryParameter("nombreEquipo", nombreEquipo)
@@ -75,7 +75,7 @@ public class EsEquipoFavorito extends Worker {
 
                 // Preparar los datos a devolver
                 resultado = new Data.Builder()
-                        .putString("esFavorito", respuesta)
+                        .putString("consultaExitosa", respuesta)
                         .build();
                 inputStream.close();
             }

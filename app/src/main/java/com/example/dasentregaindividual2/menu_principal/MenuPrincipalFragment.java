@@ -31,7 +31,7 @@ import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.example.dasentregaindividual2.R;
-import com.example.dasentregaindividual2.base_de_datos.favorito.ListarFavoritos;
+import com.example.dasentregaindividual2.servidor.base_de_datos.favorito.ListarFavoritos;
 
 import org.json.JSONArray;
 import org.json.JSONException;
