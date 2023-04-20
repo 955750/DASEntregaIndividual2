@@ -2,6 +2,7 @@ package com.example.dasentregaindividual2.lista_partidos;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import androidx.work.WorkManager;
 
 import com.example.dasentregaindividual2.R;
 import com.example.dasentregaindividual2.servidor.base_de_datos.ListarEquiposDeUnPartido;
+import com.example.dasentregaindividual2.servidor.base_de_datos.equipo.RecuperarEscudoEquipo;
 import com.example.dasentregaindividual2.servidor.base_de_datos.modelos.EquipoPartido;
 import com.example.dasentregaindividual2.servidor.base_de_datos.modelos.Partido;
 import com.example.dasentregaindividual2.servidor.base_de_datos.partido.ListarPartidos;
@@ -36,6 +38,8 @@ public class ListaPartidosFragment extends Fragment {
     private ListenerListaPartidosFragment listenerListaPartidosFragment;
     private Partido[] listaPartidos;
     private int listaPartidosInd;
+    private EquipoPartido[][] equiposPartidos;
+    private int equiposPartidosInd;
 
 
     /*
@@ -58,6 +62,8 @@ public class ListaPartidosFragment extends Fragment {
 
         listaPartidos = new Partido[9];
         listaPartidosInd = 0;
+        equiposPartidos = new EquipoPartido[9][2];
+        equiposPartidosInd = 0;
     }
 
     @Override
@@ -187,6 +193,156 @@ public class ListaPartidosFragment extends Fragment {
                                         .getString("listaEquiposPartido");
                                 JSONArray listaEquiposPartidoJSON = new JSONArray(
                                         listaEquiposPartidoStr);
+                                for(int i = 0; i < listaEquiposPartidoJSON.length(); i++) {
+                                    int puntos = Integer.parseInt(listaEquiposPartidoJSON
+                                            .getJSONObject(i).getString("puntos"));
+                                    int local = Integer.parseInt(listaEquiposPartidoJSON
+                                            .getJSONObject(i).getString("local"));
+                                    String nombre = listaEquiposPartidoJSON.getJSONObject(i)
+                                            .getString("nombre");
+                                    int partGanUlt10 = Integer.parseInt(listaEquiposPartidoJSON
+                                            .getJSONObject(i).getString("partGanUlt10"));
+                                    int partPerUlt10 = Integer.parseInt(listaEquiposPartidoJSON
+                                            .getJSONObject(i).getString("partPerUlt10"));
+
+                                    recuperarEscudoEquipo(puntos, local, nombre,
+                                            partGanUlt10, partPerUlt10, fecha, hora,
+                                            Integer.parseInt(partidoId));
+                                }
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }
+                });
+
+        WorkManager.getInstance(requireContext()).enqueue(otwr2);
+    }
+
+    private void recuperarEscudoEquipo(
+        int pPuntos,
+        int pLocal,
+        String pNombre,
+        int pPartGanUlt10,
+        int pPartPerUlt10,
+        String pFecha,
+        String pHora,
+        int pPartidoId
+    ) {
+        Data parametros = new Data.Builder()
+                .putString("nombreEquipo", pNombre)
+                .build();
+
+        Constraints restricciones = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        OneTimeWorkRequest otwr2 = new OneTimeWorkRequest.Builder(RecuperarEscudoEquipo.class)
+                .setConstraints(restricciones)
+                .setInputData(parametros)
+                .build();
+
+        WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(otwr2.getId())
+                .observe(this, new Observer<WorkInfo>() {
+
+                    /*
+                     * Una vez completada la consulta, se comprueba el resultado de la consulta.
+                     * Si se da la condición 'esFavorito == 1' el valor 'pEsFavorito' de la clase
+                     * modelo 'EquipoClasificacion' pasa a ser 'true'. Una vez definido ese valor
+                     * se procede a añadir el equipo a la lista.
+                     */
+                    @Override
+                    public void onChanged(WorkInfo workInfo) {
+                        if (workInfo != null && workInfo.getState().isFinished()) {
+                            String escudoEquipo = workInfo.getOutputData()
+                                    .getString("escudoEquipo");
+                            Log.d("ClasificacionFragment", escudoEquipo);
+                            if (escudoEquipo != null) {
+                                EquipoPartido equipoConEscudo = new EquipoPartido(
+                                        escudoEquipo,
+                                        pNombre,
+                                        getString(R.string.racha_ultimos_partidos, pPartGanUlt10, pPartPerUlt10),
+                                        pPuntos
+                                );
+
+                                if (pLocal == 1) {
+                                    equiposPartidos[pPartidoId - 1][0] = equipoConEscudo;
+                                } else {
+                                    equiposPartidos[pPartidoId - 1][1] = equipoConEscudo;
+                                }
+                            }
+                            equiposPartidosInd++;
+                            /*equiposPartidoAuxInd++;
+                            if (equiposPartidoAuxInd == 2) {
+                                EquipoPartido[] equiposPartido = new EquipoPartido[2];
+                                equiposPartido[0] = equiposPartidoAux[0];
+                                equiposPartido[1] = equiposPartidoAux[1];
+                                Partido partidoJornada = new Partido(equiposPartido, pFecha, pHora);
+                                listaPartidos[listaPartidosInd] = partidoJornada;
+                                listaPartidosInd++;
+                                equiposPartidoAuxInd = 0;
+                                equiposPartido[0] = null;
+                                equiposPartido[1] = null;
+                            }*/
+                            // if (listaPartidosInd == 9) {
+                            if (equiposPartidosInd == 18) {
+                                for(int i = 0; i < equiposPartidos.length; i++) {
+                                    EquipoPartido[] equiposPartidoActual = new EquipoPartido[2];
+                                    equiposPartidoActual[0] = equiposPartidos[i][0];
+                                    equiposPartidoActual[1] = equiposPartidos[i][1];
+                                    Partido partidoJornada = new Partido(equiposPartidoActual,
+                                            pFecha, pHora);
+                                    listaPartidos[listaPartidosInd] = partidoJornada;
+                                    listaPartidosInd++;
+                                    int a = 0;
+                                }
+                                jornadasRecyclerView.setAdapter(
+                                        new ListaPartidosAdapter(listaPartidos)
+                                );
+                            }
+                        }
+                    }
+                });
+
+        WorkManager.getInstance(requireContext()).enqueue(otwr2);
+    }
+
+    /*private void recuperarEquiposDeUnPartido(
+            String partidoId,
+            Integer numJornada,
+            String fecha,
+            String hora
+    ) {
+        Data parametros = new Data.Builder()
+                .putString("partidoId", partidoId)
+                .build();
+
+        Constraints restricciones = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        OneTimeWorkRequest otwr2 = new OneTimeWorkRequest.Builder(ListarEquiposDeUnPartido.class)
+                .setConstraints(restricciones)
+                .setInputData(parametros)
+                .build();
+
+        WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(otwr2.getId())
+                .observe(this, new Observer<WorkInfo>() {
+
+                    *//*
+     * Una vez completada la consulta, por cada equipo que disputa el partido
+     * se recupera su correspondiente información y se transforma en clases
+     * modelo de forma que los datos recuperados se puedan usar en la aplicación
+     * para mostrarlos en el 'RecyclerView' del fragmento
+     *//*
+                    @Override
+                    public void onChanged(WorkInfo workInfo) {
+                        if(workInfo != null && workInfo.getState().isFinished()) {
+                            try {
+                                String listaEquiposPartidoStr = workInfo.getOutputData()
+                                        .getString("listaEquiposPartido");
+                                JSONArray listaEquiposPartidoJSON = new JSONArray(
+                                        listaEquiposPartidoStr);
                                 EquipoPartido[] equiposPartido = new EquipoPartido[2];
                                 int j = 0;
                                 for(int i = 0; i < listaEquiposPartidoJSON.length(); i++) {
@@ -231,5 +387,5 @@ public class ListaPartidosFragment extends Fragment {
                 });
 
         WorkManager.getInstance(requireContext()).enqueue(otwr2);
-    }
+    }*/
 }

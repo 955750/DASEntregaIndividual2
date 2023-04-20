@@ -25,7 +25,7 @@ public class ListarEquiposDeUnPartido extends Worker {
     /*
      * En esta función se ejecuta la siguiente consulta de forma asíncrona:
      *
-     * SELECT j.puntos, j.partido_id, j.local, e.nombre, e.escudo_id, e.part_ganados_ult_10,
+     * SELECT j.puntos, j.partido_id, j.local, e.nombre, e.fotoBase64, e.part_ganados_ult_10,
      * e.part_perdidos_ult_10
      * FROM Juega AS j INNER JOIN Equipo AS e ON j.nombre_equipo = e.nombre
      * WHERE j.partido_id = ?

@@ -1,6 +1,9 @@
 package com.example.dasentregaindividual2.lista_partidos;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,18 +37,35 @@ public class ListaPartidosAdapter extends RecyclerView.Adapter<ListaPartidosView
         return listaPartidosViewHolder;
     }
 
+    private Bitmap base64StringToBitmap(String base64String) {
+        try{
+            byte [] encodeByte = Base64.decode(base64String,Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        }
+        catch(Exception e){
+            e.getMessage();
+            return null;
+        }
+    }
+
     @Override
     public void onBindViewHolder(@NonNull ListaPartidosViewHolder holder, int position) {
         /* Cargar datos del equipo local */
         EquipoPartido equipoLocal = partidosJornada[position].getEquipos()[0];
-        holder.escudoEquipoLocalIV.setImageResource(equipoLocal.getEscudoId());
+        String escudoBase64Local = equipoLocal.getEscudoBase64();
+        //holder.escudoIV.setImageBitmap(base64StringToBitmap(escudoBase64Local));
+        holder.escudoEquipoLocalIV.setImageBitmap(base64StringToBitmap(escudoBase64Local));
+        //holder.escudoEquipoLocalIV.setImageResource(equipoLocal.getEscudoBase64());
         holder.nombreEquipoLocalTV.setText(equipoLocal.getNombre());
         holder.ultimosPartidosEquipoLocalTV.setText(equipoLocal.getRachaUltimosPartidos());
         holder.puntosEquipoLocalTV.setText(String.valueOf(equipoLocal.getPuntos()));
 
         /* Cargar datos del equipo visitante */
         EquipoPartido equipoVisitante = partidosJornada[position].getEquipos()[1];
-        holder.escudoEquipoVisitanteIV.setImageResource(equipoVisitante.getEscudoId());
+        String escudoBase64Visitante = equipoVisitante.getEscudoBase64();
+        // holder.escudoEquipoVisitanteIV.setImageResource(equipoVisitante.getEscudoBase64());
+        holder.escudoEquipoVisitanteIV.setImageBitmap(base64StringToBitmap(escudoBase64Visitante));
         holder.nombreEquipoVisitanteTV.setText(equipoVisitante.getNombre());
         holder.ultimosPartidosEquipoVisitanteTV.setText(equipoVisitante.getRachaUltimosPartidos());
         holder.puntosEquipoVisitanteTV.setText(String.valueOf(equipoVisitante.getPuntos()));

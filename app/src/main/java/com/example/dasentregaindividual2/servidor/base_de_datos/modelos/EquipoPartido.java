@@ -2,26 +2,26 @@ package com.example.dasentregaindividual2.servidor.base_de_datos.modelos;
 
 public class EquipoPartido {
 
-    private int escudoId;
+    private String escudoBase64;
     private String nombre;
     private String rachaUltimosPartidos;
     private int puntos;
 
 
     public EquipoPartido(
-        int pEscudo,
+        String pEscudoBase64,
         String pNombre,
         String pRachaUltimosPartidos,
         int pPuntos
     ) {
-        this.escudoId = pEscudo;
+        this.escudoBase64 = pEscudoBase64;
         this.nombre = pNombre;
         this.rachaUltimosPartidos = pRachaUltimosPartidos;
         this.puntos = pPuntos;
     }
 
-    public int getEscudoId() {
-        return escudoId;
+    public String getEscudoBase64() {
+        return escudoBase64;
     }
 
     public String getNombre() {
