@@ -1,5 +1,6 @@
 package com.example.dasentregaindividual2.clasificacion;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.Constraints;
 import androidx.work.Data;
@@ -20,6 +22,7 @@ import androidx.work.WorkManager;
 
 import com.example.dasentregaindividual2.R;
 import com.example.dasentregaindividual2.servidor.base_de_datos.equipo.ListarEquiposOrdenAscDerrotas;
+import com.example.dasentregaindividual2.servidor.base_de_datos.favorito.EsEquipoFavorito;
 import com.example.dasentregaindividual2.servidor.base_de_datos.modelos.EquipoClasificacion;
 import com.example.dasentregaindividual2.servidor.base_de_datos.equipo.RecuperarEscudoEquipo;
 
@@ -115,7 +118,6 @@ public class ClasificacionFragment extends Fragment {
                                             false
                                     );
                                     recuperarEscudoEquipo(equipo);
-                                    // recuperarEquiposFavoritos(equipo);
                                 }
                             } catch (JSONException e) {
                                 throw new RuntimeException(e);
@@ -156,8 +158,7 @@ public class ClasificacionFragment extends Fragment {
                             String escudoEquipo = workInfo.getOutputData()
                                     .getString("escudoEquipo");
                             Log.d("ClasificacionFragment", escudoEquipo);
-                            if (escudoEquipo != null) {
-                                EquipoClasificacion equipoConEscudo = new EquipoClasificacion(
+                            EquipoClasificacion equipoConEscudo = new EquipoClasificacion(
                                     eq.getPosicion(), escudoEquipo, eq.getNombre(),
                                     eq.getPartidosGanadosTotales(),
                                     eq.getPartidosPerdidosTotales(),
@@ -166,8 +167,56 @@ public class ClasificacionFragment extends Fragment {
                                     eq.getPartidosGanadosUltimos10(),
                                     eq.getPartidosPerdidosUltimos10(),
                                     false
+                            );
+                            recuperarValorFavorito(equipoConEscudo);
+                        }
+                    }
+                });
+
+        WorkManager.getInstance(requireContext()).enqueue(otwr2);
+    }
+
+    /*private void recuperarEscudoEquipo(EquipoClasificacion eq) {
+        Data parametros = new Data.Builder()
+                .putString("nombreEquipo", eq.getNombre())
+                .build();
+
+        Constraints restricciones = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        OneTimeWorkRequest otwr2 = new OneTimeWorkRequest.Builder(RecuperarEscudoEquipo.class)
+                .setConstraints(restricciones)
+                .setInputData(parametros)
+                .build();
+
+        WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(otwr2.getId())
+                .observe(this, new Observer<WorkInfo>() {
+
+                    *//*
+                     * Una vez completada la consulta, se comprueba el resultado de la consulta.
+                     * Si se da la condición 'esFavorito == 1' el valor 'pEsFavorito' de la clase
+                     * modelo 'EquipoClasificacion' pasa a ser 'true'. Una vez definido ese valor
+                     * se procede a añadir el equipo a la lista.
+                     *//*
+                    @Override
+                    public void onChanged(WorkInfo workInfo) {
+                        if (workInfo != null && workInfo.getState().isFinished()) {
+                            String escudoEquipo = workInfo.getOutputData()
+                                    .getString("escudoEquipo");
+                            Log.d("ClasificacionFragment", escudoEquipo);
+                            if (escudoEquipo != null) {
+                                EquipoClasificacion equipoConEscudo = new EquipoClasificacion(
+                                        eq.getPosicion(), escudoEquipo, eq.getNombre(),
+                                        eq.getPartidosGanadosTotales(),
+                                        eq.getPartidosPerdidosTotales(),
+                                        eq.getPuntosFavorTotales(),
+                                        eq.getPuntosContraTotales(),
+                                        eq.getPartidosGanadosUltimos10(),
+                                        eq.getPartidosPerdidosUltimos10(),
+                                        false
                                 );
-                                    listaEquipos[listaEquiposInd] = equipoConEscudo;
+                                listaEquipos[listaEquiposInd] = equipoConEscudo;
                             } else { // ERROR AL OBTENER ESCUDO
                                 listaEquipos[listaEquiposInd] = eq;
                             }
@@ -183,6 +232,81 @@ public class ClasificacionFragment extends Fragment {
                 });
 
         WorkManager.getInstance(requireContext()).enqueue(otwr2);
+    }*/
+
+    private void recuperarValorFavorito(EquipoClasificacion eq) {
+        SharedPreferences preferencias = PreferenceManager
+                .getDefaultSharedPreferences(requireContext());
+        String usuario = preferencias.getString("usuario", null);
+        Data parametros = new Data.Builder()
+                .putString("nombreUsuario", usuario)
+                .putString("nombreEquipo", eq.getNombre())
+                .build();
+
+        Constraints restricciones = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        OneTimeWorkRequest otwr3 = new OneTimeWorkRequest.Builder(EsEquipoFavorito.class)
+                .setConstraints(restricciones)
+                .setInputData(parametros)
+                .build();
+
+        WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(otwr3.getId())
+                .observe(this, new Observer<WorkInfo>() {
+
+                    /*
+                     * Una vez completada la consulta, se comprueba el resultado de la consulta.
+                     * Si se da la condición 'esFavorito == 1' el valor 'pEsFavorito' de la clase
+                     * modelo 'EquipoClasificacion' pasa a ser 'true'. Una vez definido ese valor
+                     * se procede a añadir el equipo a la lista.
+                     */
+                    @Override
+                    public void onChanged(WorkInfo workInfo) {
+                        if (workInfo != null && workInfo.getState().isFinished()) {
+                            String esFavoritoStr = workInfo.getOutputData()
+                                    .getString("esFavorito");
+                            if (esFavoritoStr != null) {
+                                int esFavorito = Integer.parseInt(esFavoritoStr);
+                                if (esFavorito == 1) { // El equipo ES FAVORITO
+                                    EquipoClasificacion equipoFav = new EquipoClasificacion(
+                                            eq.getPosicion(), eq.getEscudoBase64(), eq.getNombre(),
+                                            eq.getPartidosGanadosTotales(),
+                                            eq.getPartidosPerdidosTotales(),
+                                            eq.getPuntosFavorTotales(),
+                                            eq.getPuntosContraTotales(),
+                                            eq.getPartidosGanadosUltimos10(),
+                                            eq.getPartidosPerdidosUltimos10(),
+                                            true
+                                    );
+                                    listaEquipos[listaEquiposInd] = equipoFav;
+                                } else { // El equipo NO ES FAVORITO
+                                    EquipoClasificacion equipoNoFav = new EquipoClasificacion(
+                                            eq.getPosicion(), eq.getEscudoBase64(), eq.getNombre(),
+                                            eq.getPartidosGanadosTotales(),
+                                            eq.getPartidosPerdidosTotales(),
+                                            eq.getPuntosFavorTotales(),
+                                            eq.getPuntosContraTotales(),
+                                            eq.getPartidosGanadosUltimos10(),
+                                            eq.getPartidosPerdidosUltimos10(),
+                                            false
+                                    );
+                                    // listaEquipos[listaEquiposInd] = eq;
+                                    listaEquipos[listaEquiposInd] = equipoNoFav;
+                                }
+
+                                listaEquiposInd++;
+                                if (listaEquiposInd == 18) {
+                                    clasificacionRecyclerView.setAdapter(
+                                            new ClasificacionAdapter(listaEquipos)
+                                    );
+                                }
+                            }
+                        }
+                    }
+                });
+
+        WorkManager.getInstance(requireContext()).enqueue(otwr3);
     }
 
     /*
