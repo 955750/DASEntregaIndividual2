@@ -46,4 +46,6 @@
     <string name="toast_creacion_cuenta_error">Kontua sortzerakoan errore bat jazo da</string>
     <string name="toast_añadir_favoritos_error">Errore bat jazo da \'%s\' taldea gustukoen zerrendara sartzerakoan</string>
     <string name="toast_eliminar_favoritos_error">Errore bat jazo da \'%s\' taldea gustukoen zerrendatik kentzerakoan</string>
+    <string name="perfil">Profila</string>
+    <string name="actualizar_foto_de_perfil">Profileko argazkia eguneratu</string>
 </resources>

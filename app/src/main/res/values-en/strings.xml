@@ -46,4 +46,6 @@
     <string name="toast_creacion_cuenta_error">An error has occurred while creating an account</string>
     <string name="toast_añadir_favoritos_error">An error has occurred while adding \'%s\' to favourites list</string>
     <string name="toast_eliminar_favoritos_error">An error has occurred while removing \'%s\' from favourites list</string>
+    <string name="perfil">Profile</string>
+    <string name="actualizar_foto_de_perfil">Update profile photo</string>
 </resources>

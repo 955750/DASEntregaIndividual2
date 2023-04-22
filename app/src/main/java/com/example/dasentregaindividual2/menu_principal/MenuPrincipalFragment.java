@@ -50,6 +50,7 @@ public class MenuPrincipalFragment extends Fragment {
     private Button botonAjustes;
     private Button botonSalir;
     private Button botonRecomendarApk;
+    private Button botonPerfil;
 
     /* Otros atributos */
     private ListenerMenuPrincipalFragment listenerMenuPrincipalFragment;
@@ -157,6 +158,14 @@ public class MenuPrincipalFragment extends Fragment {
             }
         });
 
+        botonPerfil = view.findViewById(R.id.boton_perfil);
+        botonPerfil.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                navegarHaciaPerfil(view);
+            }
+        });
+
         agregarFuncionABotonAtras();
     }
 
@@ -259,6 +268,12 @@ public class MenuPrincipalFragment extends Fragment {
     private void navegarHaciaAjustes(View view) {
         NavDirections accion = MenuPrincipalFragmentDirections
             .actionMenuPrincipalFragmentToAjustesFragment();
+        Navigation.findNavController(view).navigate(accion);
+    }
+
+    private void navegarHaciaPerfil(View view) {
+        NavDirections accion = MenuPrincipalFragmentDirections
+                .actionMenuPrincipalFragmentToPerfilFragment();
         Navigation.findNavController(view).navigate(accion);
     }
 

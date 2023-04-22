@@ -55,6 +55,8 @@ public class MainActivity extends AppCompatActivity
 
         solicitarPermisosNotificaciones();
 
+        solicitarPermisosCamara();
+
         NotificationManager elManager = (NotificationManager)
             getSystemService(Context.NOTIFICATION_SERVICE);
         elManager.cancel(1);
@@ -89,6 +91,15 @@ public class MainActivity extends AppCompatActivity
                 ActivityCompat.requestPermissions(this, new
                     String[]{Manifest.permission.POST_NOTIFICATIONS}, 11);
             }
+        }
+    }
+
+    private void solicitarPermisosCamara() {
+        if (ContextCompat.checkSelfPermission(
+                this, Manifest.permission.CAMERA) !=
+                PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new
+                    String[]{Manifest.permission.CAMERA}, 12);
         }
     }
 

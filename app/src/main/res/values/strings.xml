@@ -52,6 +52,8 @@
     <string name="toast_creacion_cuenta_error">Ha ocurrido un error al crear la cuenta</string>
     <string name="toast_añadir_favoritos_error">Ha ocurrido un error al añadir \'%s\' a favoritos</string>
     <string name="toast_eliminar_favoritos_error">Ha ocurrido un error al eliminar \'%s\' de favoritos</string>
+    <string name="perfil">Perfil</string>
+    <string name="actualizar_foto_de_perfil">Actualizar foto de perfil</string>
 
     <string-array name="idiomas_disponibles">
         <item>Euskara</item>

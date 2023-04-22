@@ -54,8 +54,14 @@
                 android:id="@+id/boton_recomendar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
                 android:text="@string/recomendar_aplicacion"/>
 
+            <Button
+                android:id="@+id/boton_perfil"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/perfil"/>
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
