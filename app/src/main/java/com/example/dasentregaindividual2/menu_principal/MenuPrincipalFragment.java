@@ -51,6 +51,7 @@ public class MenuPrincipalFragment extends Fragment {
     private Button botonSalir;
     private Button botonRecomendarApk;
     private Button botonPerfil;
+    private Button botonLocalizarEstadio;
 
     /* Otros atributos */
     private ListenerMenuPrincipalFragment listenerMenuPrincipalFragment;
@@ -166,6 +167,13 @@ public class MenuPrincipalFragment extends Fragment {
             }
         });
 
+        botonLocalizarEstadio = view.findViewById(R.id.boton_localizar_estadio);
+        botonLocalizarEstadio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                navegarHaciaLocalizarEstadio(view);
+            }
+        });
         agregarFuncionABotonAtras();
     }
 
@@ -274,6 +282,12 @@ public class MenuPrincipalFragment extends Fragment {
     private void navegarHaciaPerfil(View view) {
         NavDirections accion = MenuPrincipalFragmentDirections
                 .actionMenuPrincipalFragmentToPerfilFragment();
+        Navigation.findNavController(view).navigate(accion);
+    }
+
+    private void navegarHaciaLocalizarEstadio(View view) {
+        NavDirections accion = MenuPrincipalFragmentDirections
+                .actionMenuPrincipalFragmentToLocalizarEstadioFragment();
         Navigation.findNavController(view).navigate(accion);
     }
 

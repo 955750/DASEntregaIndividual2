@@ -48,4 +48,5 @@
     <string name="toast_eliminar_favoritos_error">An error has occurred while removing \'%s\' from favourites list</string>
     <string name="perfil">Profile</string>
     <string name="actualizar_foto_de_perfil">Update profile photo</string>
+    <string name="localizar_estadio">Locate stadium</string>
 </resources>

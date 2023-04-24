@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.chip.Chip xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="5dp"
+    android:layout_marginEnd="5dp"
+    android:textAppearance="@style/aparienciaTextoChips"
+    app:chipBackgroundColor="@color/blanco"
+    app:chipIconSize="18dp"
+    app:chipStrokeColor="@color/naranja_menos_vivo"
+    app:chipStrokeWidth="3dp"
+    app:iconStartPadding="10dp"
+    app:iconEndPadding="5dp"
+    app:chipEndPadding="10dp"
+    tools:chipBackgroundColor="@color/naranja_claro"
+    tools:chipIcon="@drawable/escudo_baskonia"
+    tools:text="Baskonia">
+
+</com.google.android.material.chip.Chip>

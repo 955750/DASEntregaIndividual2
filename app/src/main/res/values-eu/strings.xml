@@ -48,4 +48,5 @@
     <string name="toast_eliminar_favoritos_error">Errore bat jazo da \'%s\' taldea gustukoen zerrendatik kentzerakoan</string>
     <string name="perfil">Profila</string>
     <string name="actualizar_foto_de_perfil">Profileko argazkia eguneratu</string>
+    <string name="localizar_estadio">Estadioa bilatu</string>
 </resources>

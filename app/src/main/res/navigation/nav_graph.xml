@@ -37,6 +37,9 @@
         <action
             android:id="@+id/action_menuPrincipalFragment_to_perfilFragment"
             app:destination="@id/perfilFragment" />
+        <action
+            android:id="@+id/action_menuPrincipalFragment_to_localizarEstadioFragment"
+            app:destination="@id/localizarEstadioFragment" />
 
     </fragment>
 
@@ -88,5 +91,10 @@
         android:name="com.example.dasentregaindividual2.perfil.PerfilFragment"
         android:label="@string/perfil"
         tools:layout="@layout/fragment_perfil" />
+    <fragment
+        android:id="@+id/localizarEstadioFragment"
+        android:name="com.example.dasentregaindividual2.localizar_estadio.LocalizarEstadioFragment"
+        android:label="@string/localizar_estadio"
+        tools:layout="@layout/fragment_localizar_estadio" />
 
 </navigation>

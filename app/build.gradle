@@ -52,6 +52,9 @@ dependencies {
     // Dependencia para usar 'FCM Service'
     implementation 'com.google.firebase:firebase-messaging:23.1.2'
 
+    // Dependencia para usar Google Maps
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+
 
     /* Dependencias para tests */
     testImplementation 'junit:junit:4.13.2'

@@ -61,7 +61,14 @@
                 android:id="@+id/boton_perfil"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
                 android:text="@string/perfil"/>
+
+            <Button
+                android:id="@+id/boton_localizar_estadio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/localizar_estadio"/>
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
