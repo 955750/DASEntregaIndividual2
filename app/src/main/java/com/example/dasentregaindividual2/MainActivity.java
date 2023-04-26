@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity
             Log.d("MainActivity", "fecha --> " + fecha);
         }
 
-        solicitarPermisosNotificaciones();
+        // solicitarPermisosNotificaciones();
 
         solicitarPermisosCamara();
 

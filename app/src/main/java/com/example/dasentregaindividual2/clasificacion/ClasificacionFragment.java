@@ -279,7 +279,8 @@ public class ClasificacionFragment extends Fragment {
                                             eq.getPartidosPerdidosUltimos10(),
                                             true
                                     );
-                                    listaEquipos[listaEquiposInd] = equipoFav;
+                                    // listaEquipos[listaEquiposInd] = equipoFav;
+                                    listaEquipos[eq.getPosicion() - 1] = equipoFav;
                                 } else { // El equipo NO ES FAVORITO
                                     EquipoClasificacion equipoNoFav = new EquipoClasificacion(
                                             eq.getPosicion(), eq.getEscudoBase64(), eq.getNombre(),
@@ -292,7 +293,8 @@ public class ClasificacionFragment extends Fragment {
                                             false
                                     );
                                     // listaEquipos[listaEquiposInd] = eq;
-                                    listaEquipos[listaEquiposInd] = equipoNoFav;
+                                    // listaEquipos[listaEquiposInd] = equipoNoFav;
+                                    listaEquipos[eq.getPosicion() - 1] = equipoNoFav;
                                 }
 
                                 listaEquiposInd++;
