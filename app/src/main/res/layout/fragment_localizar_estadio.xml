@@ -36,6 +36,7 @@
             </HorizontalScrollView>
         </com.google.android.material.card.MaterialCardView>
     </FrameLayout>
+
     <androidx.fragment.app.FragmentContainerView
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:id="@+id/fragmentoMapa"
