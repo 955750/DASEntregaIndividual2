@@ -43,6 +43,10 @@
             </intent-filter>
         </service>
 
+        <receiver
+            android:name=".Alarma.ReceiverAlarma"
+            android:exported="true" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAJRBH1670iReD1yjfHFNSnFML6dyq-DQc" />

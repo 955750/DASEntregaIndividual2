@@ -1,15 +1,18 @@
 package com.example.dasentregaindividual2;
 
 import android.Manifest;
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -27,6 +30,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 
+import com.example.dasentregaindividual2.Alarma.ReceiverAlarma;
 import com.example.dasentregaindividual2.lista_partidos.ListaPartidosFragment;
 import com.example.dasentregaindividual2.menu_principal.MenuPrincipalFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,6 +39,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity
@@ -77,6 +82,38 @@ public class MainActivity extends AppCompatActivity
         }
 
         inicializarPreferencias();
+
+        activarAlarma();
+    }
+
+    private void activarAlarma() {
+        Intent intentBC = new Intent(this, ReceiverAlarma.class);
+        intentBC.putExtra("menseje", "ALARM MANAGER");
+        // intentBC.setAction("avisoPersonalizado");
+        PendingIntent ibc = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            ibc = PendingIntent.getBroadcast(
+                this,
+                1,
+                intentBC,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+            );
+        } else {
+            ibc = PendingIntent.getBroadcast(
+                this,
+                1,
+                intentBC,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            );
+        }
+
+        AlarmManager gestor = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        gestor.setInexactRepeating(
+            AlarmManager.RTC_WAKEUP,
+            SystemClock.elapsedRealtime(),
+            10*1000,
+            ibc
+        );
     }
 
     /* Función para que la flecha de la 'app bar' nos lleve al fragmento anterior */

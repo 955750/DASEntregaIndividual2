@@ -63,4 +63,6 @@
         <item>Castellano</item>
         <item>English</item>
     </string-array>
+    <string name="notificacion_alarma_titulo">¡¡ Última hora !!</string>
+    <string name="notificacion_alarma_texto">¿Por qué no echas un vistazo a las novedades de la Euroliga?</string>
 </resources>

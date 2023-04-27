@@ -49,4 +49,6 @@
     <string name="perfil">Profila</string>
     <string name="actualizar_foto_de_perfil">Profileko argazkia eguneratu</string>
     <string name="localizar_estadio">Estadioa bilatu</string>
+    <string name="notificacion_alarma_titulo">Azken orduko berriak !!</string>
+    <string name="notificacion_alarma_texto">Zergatik ez diezu begiradatxo bat botatzen Euroligako berritasunei?</string>
 </resources>

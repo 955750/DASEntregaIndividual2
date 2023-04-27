@@ -49,4 +49,6 @@
     <string name="perfil">Profile</string>
     <string name="actualizar_foto_de_perfil">Update profile photo</string>
     <string name="localizar_estadio">Locate stadium</string>
+    <string name="notificacion_alarma_titulo">Breaking news !!</string>
+    <string name="notificacion_alarma_texto">Why don\'t you take a look at Euroleague news?</string>
 </resources>
