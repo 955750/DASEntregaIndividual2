@@ -1,10 +1,7 @@
 package com.example.dasentregaindividual2.servidor.base_de_datos.equipo;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.util.Base64;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -14,7 +11,6 @@ import androidx.work.WorkerParameters;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -27,6 +23,12 @@ public class RecuperarEscudoEquipo extends Worker {
         super(context, workerParams);
     }
 
+    /*
+     * En esta función se ejecuta la siguiente consulta de forma asíncrona:
+     *
+     * SELECT foto_base_64 FROM Equipo
+	 * WHERE nombre = ?
+     */
     @NonNull
     @Override
     public Result doWork() {
@@ -75,20 +77,6 @@ public class RecuperarEscudoEquipo extends Worker {
                         .putString("escudoEquipo", respuesta)
                         .build();
                 inputStream.close();
-
-            // Procesar la respuesta de la llamada HTTP
-            /*int statusCode = urlConnection.getResponseCode();
-            if (statusCode == 200) {
-                Bitmap elBitmap = BitmapFactory.decodeStream(urlConnection.getInputStream());
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                elBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                byte[] fototransformada = stream.toByteArray();
-                String fotoen64 = Base64.encodeToString(fototransformada,Base64.DEFAULT);
-
-                // Preparar los datos a devolver
-                resultado = new Data.Builder()
-                        .putString("escudoEquipo", fotoen64)
-                        .build();*/
             }
         }  catch (IOException e) {
             throw new RuntimeException(e);

@@ -4,6 +4,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.Base64;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,12 +21,6 @@ import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
-
-import android.util.Base64;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.example.dasentregaindividual2.R;
 import com.example.dasentregaindividual2.servidor.base_de_datos.equipo.RecuperarEquiposConCoordenadas;
@@ -91,17 +90,25 @@ public class LocalizarEstadioFragment extends Fragment implements OnMapReadyCall
         fragmentoMapa.getMapAsync(this);
     }
 
+    /*
+     * En esta función, una vez que el mapa está listo para ser mostrado, se crea una instancia
+     * para poder ser utilizado a lo largo del código.
+     */
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         elMapa = googleMap;
         elMapa.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         crearChipsYMarcadoresDeEquipos();
-        /*elMapa.addMarker(new MarkerOptions()
-                .position(new LatLng(52.506359, 13.443642))
-                .title("Mercedes-Benz Arena"));*/
     }
 
+    /*
+     * En esta función, se encola una tarea cuyo cometido es lanzar la siguiente consulta contra
+     * la base de datos remota (la tarea requiere de conexión a internet para poder acceder a la
+     * base de datos alojada en el servidor):
+     *
+     * SELECT nombre, latitud, longitud, nombre_estadio FROM Equipo
+     */
     private void crearChipsYMarcadoresDeEquipos() {
         Constraints restricciones = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -116,8 +123,8 @@ public class LocalizarEstadioFragment extends Fragment implements OnMapReadyCall
 
                     /*
                      * Una vez completada la consulta, se recupera la información que nos
-                     * devuelve esta y se pasa a la función 'recuperarEquiposFavoritos' para
-                     * poder mostrar en pantalla con una estrella los equipos que son favoritos.
+                     * devuelve esta y se pasa a la función 'recuperarEscudoEquipo' para
+                     * poder mostrar el escudo correspondiente junto al nombre de cada equipo.
                      */
                     @Override
                     public void onChanged(WorkInfo workInfo) {
@@ -135,20 +142,9 @@ public class LocalizarEstadioFragment extends Fragment implements OnMapReadyCall
                                             .getJSONObject(i).getString("longitud"));
                                     String nombreEstadio = listaEquiposJSON.getJSONObject(i)
                                             .getString("nombreEstadio");
-                                    // recuperarEscudoEquipo(nombre, latitud, longitud);
 
                                     recuperarEscudoEquipo(i, nombre, latitud, longitud,
                                             nombreEstadio);
-                                    /* CREAR CHIPS */
-                                    // crearChip(i, nombre, latitud, longitud);
-                                    /*Chip chip = (Chip) getLayoutInflater().inflate(
-                                            R.layout.chip_localizar_estadio,
-                                            equiposChipGroup,
-                                            false
-                                    );
-                                    chip.setId(i);
-                                    chip.setText(nombre);
-                                    equiposChipGroup.addView(chip);*/
                                 }
                             } catch (JSONException e) {
                                 throw new RuntimeException(e);
@@ -160,6 +156,14 @@ public class LocalizarEstadioFragment extends Fragment implements OnMapReadyCall
         WorkManager.getInstance(requireContext()).enqueue(otwr);
     }
 
+    /*
+     * En esta función, se encola una tarea cuyo cometido es lanzar la siguiente consulta contra
+     * la base de datos remota (la tarea requiere de conexión a internet para poder acceder a la
+     * base de datos alojada en el servidor):
+     *
+     * SELECT foto_base_64 FROM Equipo
+     * WHERE nombre = ?
+     */
     private void recuperarEscudoEquipo(
         int pIdChip,
         String pNombre,
@@ -185,10 +189,10 @@ public class LocalizarEstadioFragment extends Fragment implements OnMapReadyCall
 
                     /*
                      * Una vez completada la consulta, se recupera la información que nos
-                     * devuelve esta y se pasa a la función 'recuperarEquiposFavoritos' para
-                     * poder mostrar en pantalla con una estrella los equipos que son favoritos.
+                     * devuelve esta y se pasa a formato 'drawable' para poder ser mostrada en
+                     * los chips mediante la función 'crearChip'. Además se envía la información
+                     * de la coordenadas para mostrar la ubicación de los estadios en el mapa.
                      */
-
                     @Override
                     public void onChanged(WorkInfo workInfo) {
                         if(workInfo != null && workInfo.getState().isFinished()) {

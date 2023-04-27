@@ -1,24 +1,24 @@
 package com.example.dasentregaindividual2.Alarma;
 
-import static androidx.core.content.ContextCompat.getSystemService;
-
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
-import androidx.navigation.NavDeepLinkBuilder;
 
 import com.example.dasentregaindividual2.R;
 
 public class ReceiverAlarma extends BroadcastReceiver {
+
+    /*
+     * Esta función es la función que se ejecuta cuando se activa una alarma
+     * (La alarma se ha configurado para que se active al 5 segundos aproximadamente para
+     * poder verificar su funcionamiento)
+     */
     @Override
     public void onReceive(Context context, Intent intent) {
         NotificationManager managerNotificaciones = (NotificationManager)
@@ -27,7 +27,6 @@ public class ReceiverAlarma extends BroadcastReceiver {
                 .Builder(context, "APK Euroliga");
 
         builderNotificaciones.setSmallIcon(R.drawable.logo_notificaciones_euroliga)
-                .setContentTitle("¡¡ Última hora !!")
                 .setContentTitle(context.getString(R.string.notificacion_alarma_titulo))
                 .setContentText(context.getString(R.string.notificacion_alarma_texto))
                 .setAutoCancel(true);

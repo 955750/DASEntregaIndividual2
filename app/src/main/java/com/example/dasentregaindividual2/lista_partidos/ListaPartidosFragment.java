@@ -1,11 +1,8 @@
 package com.example.dasentregaindividual2.lista_partidos;
 
-import android.Manifest;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,8 +14,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
@@ -95,6 +90,11 @@ public class ListaPartidosFragment extends Fragment {
         recuperarListaDePartidos();
         verCalendarios();
     }
+
+    /*
+     * Mediante esta función obtenemos acceso a la lista de los calendarios del dispositivo
+     * haciendo uso del 'content provider' de los calendarios
+     */
     private void verCalendarios() {
         Uri uri = CalendarContract.Calendars.CONTENT_URI;
         String[] columnas = new String[] {
@@ -121,6 +121,10 @@ public class ListaPartidosFragment extends Fragment {
         }
     }
 
+    /*
+     * Con esta función, por cada partido de la jornada se añade un evento a un calendario
+     * especificando la fecha, hora de inicio y final, y una breve descripción del evento.
+     */
     private void crearEventosNuevos() {
         for (Partido partido : listaPartidos) {
             String[] datosFecha = partido.getFecha().split("-");
@@ -144,6 +148,13 @@ public class ListaPartidosFragment extends Fragment {
         }
     }
 
+    /*
+     * Esta función es la encargada de crear un evento individual. Par ello hace uso de los datos
+     * del partido que recoge como parámetros y añade el evento correpondiente a un calendario.
+     * Hay que destacar que el calendario con ID 1 en mi teléfono es un calendario local (el
+     * único modificable), por lo que es posible que en otros dispositivos no funcione, al no
+     * tener estos calendarios locales
+     */
     private void crearEventoNuevo(int pAño, int pMes, int pDia, int pHorasInicio,
                                   int pMinutosInicio, int pHorasFinal, int pMinutosFinal,
                                   String pLocal, String pVisitante) {
@@ -265,9 +276,9 @@ public class ListaPartidosFragment extends Fragment {
 
                     /*
                      * Una vez completada la consulta, por cada equipo que disputa el partido
-                     * se recupera su correspondiente información y se transforma en clases
-                     * modelo de forma que los datos recuperados se puedan usar en la aplicación
-                     * para mostrarlos en el 'RecyclerView' del fragmento
+                     * se recupera su correspondiente información y se envía a la función
+                     * 'recuperarEscudoEquipo' para ser añadir el escudo de cada equipo al resto
+                     * de los datos
                      */
                     @Override
                     public void onChanged(WorkInfo workInfo) {

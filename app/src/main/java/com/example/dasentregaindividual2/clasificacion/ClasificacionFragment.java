@@ -22,9 +22,9 @@ import androidx.work.WorkManager;
 
 import com.example.dasentregaindividual2.R;
 import com.example.dasentregaindividual2.servidor.base_de_datos.equipo.ListarEquiposOrdenAscDerrotas;
+import com.example.dasentregaindividual2.servidor.base_de_datos.equipo.RecuperarEscudoEquipo;
 import com.example.dasentregaindividual2.servidor.base_de_datos.favorito.EsEquipoFavorito;
 import com.example.dasentregaindividual2.servidor.base_de_datos.modelos.EquipoClasificacion;
-import com.example.dasentregaindividual2.servidor.base_de_datos.equipo.RecuperarEscudoEquipo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -85,8 +85,9 @@ public class ClasificacionFragment extends Fragment {
 
                     /*
                      * Una vez completada la consulta, se recupera la información que nos
-                     * devuelve esta y se pasa a la función 'recuperarEquiposFavoritos' para
-                     * poder mostrar en pantalla con una estrella los equipos que son favoritos.
+                     * devuelve esta y se pasa a la función 'recuperarEscudoEquipo' para
+                     * poder mostrar en pantalla el escudo de cada equipo junto con el resto
+                     * de sus datos.
                      */
                     @Override
                     public void onChanged(WorkInfo workInfo) {
@@ -129,6 +130,14 @@ public class ClasificacionFragment extends Fragment {
         WorkManager.getInstance(requireContext()).enqueue(otwr);
     }
 
+    /*
+     * En esta función, se encola una tarea cuyo cometido es lanzar la siguiente consulta contra
+     * la base de datos remota (la tarea requiere de conexión a internet para poder acceder a la
+     * base de datos alojada en el servidor):
+     *
+     * SELECT foto_base_64 FROM Equipo
+     * WHERE nombre = ?
+     */
     private void recuperarEscudoEquipo(EquipoClasificacion eq) {
         Data parametros = new Data.Builder()
                 .putString("nombreEquipo", eq.getNombre())
@@ -147,10 +156,9 @@ public class ClasificacionFragment extends Fragment {
                 .observe(this, new Observer<WorkInfo>() {
 
                     /*
-                     * Una vez completada la consulta, se comprueba el resultado de la consulta.
-                     * Si se da la condición 'esFavorito == 1' el valor 'pEsFavorito' de la clase
-                     * modelo 'EquipoClasificacion' pasa a ser 'true'. Una vez definido ese valor
-                     * se procede a añadir el equipo a la lista.
+                     * Una vez completada la consulta, se recupera la información que nos
+                     * devuelve esta y se pasa a la función 'recuperarValorFavorito' para
+                     * poder mostrar en pantalla con una estrella los equipos que son favoritos.
                      */
                     @Override
                     public void onChanged(WorkInfo workInfo) {
@@ -176,64 +184,15 @@ public class ClasificacionFragment extends Fragment {
         WorkManager.getInstance(requireContext()).enqueue(otwr2);
     }
 
-    /*private void recuperarEscudoEquipo(EquipoClasificacion eq) {
-        Data parametros = new Data.Builder()
-                .putString("nombreEquipo", eq.getNombre())
-                .build();
-
-        Constraints restricciones = new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
-
-        OneTimeWorkRequest otwr2 = new OneTimeWorkRequest.Builder(RecuperarEscudoEquipo.class)
-                .setConstraints(restricciones)
-                .setInputData(parametros)
-                .build();
-
-        WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(otwr2.getId())
-                .observe(this, new Observer<WorkInfo>() {
-
-                    *//*
-                     * Una vez completada la consulta, se comprueba el resultado de la consulta.
-                     * Si se da la condición 'esFavorito == 1' el valor 'pEsFavorito' de la clase
-                     * modelo 'EquipoClasificacion' pasa a ser 'true'. Una vez definido ese valor
-                     * se procede a añadir el equipo a la lista.
-                     *//*
-                    @Override
-                    public void onChanged(WorkInfo workInfo) {
-                        if (workInfo != null && workInfo.getState().isFinished()) {
-                            String escudoEquipo = workInfo.getOutputData()
-                                    .getString("escudoEquipo");
-                            Log.d("ClasificacionFragment", escudoEquipo);
-                            if (escudoEquipo != null) {
-                                EquipoClasificacion equipoConEscudo = new EquipoClasificacion(
-                                        eq.getPosicion(), escudoEquipo, eq.getNombre(),
-                                        eq.getPartidosGanadosTotales(),
-                                        eq.getPartidosPerdidosTotales(),
-                                        eq.getPuntosFavorTotales(),
-                                        eq.getPuntosContraTotales(),
-                                        eq.getPartidosGanadosUltimos10(),
-                                        eq.getPartidosPerdidosUltimos10(),
-                                        false
-                                );
-                                listaEquipos[listaEquiposInd] = equipoConEscudo;
-                            } else { // ERROR AL OBTENER ESCUDO
-                                listaEquipos[listaEquiposInd] = eq;
-                            }
-
-                            listaEquiposInd++;
-                            if (listaEquiposInd == 18) {
-                                clasificacionRecyclerView.setAdapter(
-                                        new ClasificacionAdapter(listaEquipos)
-                                );
-                            }
-                        }
-                    }
-                });
-
-        WorkManager.getInstance(requireContext()).enqueue(otwr2);
-    }*/
-
+    /*
+     * En esta función, se encola una tarea cuyo cometido es lanzar la siguiente consulta contra
+     * la base de datos remota (la tarea requiere de conexión a internet para poder acceder a la
+     * base de datos alojada en el servidor):
+     *
+     * SELECT COUNT(*) FROM Favorito
+     * WHERE nombre_usuario = ?
+     * AND nombre_equipo = ?
+     */
     private void recuperarValorFavorito(EquipoClasificacion eq) {
         SharedPreferences preferencias = PreferenceManager
                 .getDefaultSharedPreferences(requireContext());
@@ -259,7 +218,7 @@ public class ClasificacionFragment extends Fragment {
                      * Una vez completada la consulta, se comprueba el resultado de la consulta.
                      * Si se da la condición 'esFavorito == 1' el valor 'pEsFavorito' de la clase
                      * modelo 'EquipoClasificacion' pasa a ser 'true'. Una vez definido ese valor
-                     * se procede a añadir el equipo a la lista.
+                     * se procede a añadir el equipo a la lista en su posición correspondiente.
                      */
                     @Override
                     public void onChanged(WorkInfo workInfo) {
@@ -279,7 +238,6 @@ public class ClasificacionFragment extends Fragment {
                                             eq.getPartidosPerdidosUltimos10(),
                                             true
                                     );
-                                    // listaEquipos[listaEquiposInd] = equipoFav;
                                     listaEquipos[eq.getPosicion() - 1] = equipoFav;
                                 } else { // El equipo NO ES FAVORITO
                                     EquipoClasificacion equipoNoFav = new EquipoClasificacion(
@@ -292,8 +250,6 @@ public class ClasificacionFragment extends Fragment {
                                             eq.getPartidosPerdidosUltimos10(),
                                             false
                                     );
-                                    // listaEquipos[listaEquiposInd] = eq;
-                                    // listaEquipos[listaEquiposInd] = equipoNoFav;
                                     listaEquipos[eq.getPosicion() - 1] = equipoNoFav;
                                 }
 
@@ -310,78 +266,4 @@ public class ClasificacionFragment extends Fragment {
 
         WorkManager.getInstance(requireContext()).enqueue(otwr3);
     }
-
-    /*
-     * En esta función, se encola una tarea cuyo cometido es lanzar la siguiente consulta contra
-     * la base de datos remota (la tarea requiere de conexión a internet para poder acceder a la
-     * base de datos alojada en el servidor):
-     *
-     * SELECT COUNT(*) FROM Favorito
-     * WHERE nombre_usuario = ?
-     * AND nombre_equipo = ?
-     */
-    /*private void recuperarEquiposFavoritos(EquipoClasificacion eq) {
-        SharedPreferences preferencias = PreferenceManager
-                .getDefaultSharedPreferences(requireContext());
-        String usuario = preferencias.getString("usuario", null);
-
-        Data parametros = new Data.Builder()
-                .putString("nombreUsuario", usuario)
-                .putString("nombreEquipo", eq.getNombre())
-                .build();
-
-        Constraints restricciones = new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
-
-        OneTimeWorkRequest otwr2 = new OneTimeWorkRequest.Builder(EsEquipoFavorito.class)
-                .setConstraints(restricciones)
-                .setInputData(parametros)
-                .build();
-
-        WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(otwr2.getId())
-                .observe(this, new Observer<WorkInfo>() {
-
-                    *//*
-                     * Una vez completada la consulta, se comprueba el resultado de la consulta.
-                     * Si se da la condición 'esFavorito == 1' el valor 'pEsFavorito' de la clase
-                     * modelo 'EquipoClasificacion' pasa a ser 'true'. Una vez definido ese valor
-                     * se procede a añadir el equipo a la lista.
-                     *//*
-                    @Override
-                    public void onChanged(WorkInfo workInfo) {
-                        if (workInfo != null && workInfo.getState().isFinished()) {
-                            String esFavoritoStr = workInfo.getOutputData()
-                                    .getString("esFavorito");
-                            if (esFavoritoStr != null) {
-                                int esFavorito = Integer.parseInt(esFavoritoStr);
-                                if (esFavorito == 1) { // El equipo ES FAVORITO
-                                    EquipoClasificacion equipoFav = new EquipoClasificacion(
-                                            eq.getPosicion(), eq.getEscudoId(), eq.getNombre(),
-                                            eq.getPartidosGanadosTotales(),
-                                            eq.getPartidosPerdidosTotales(),
-                                            eq.getPuntosFavorTotales(),
-                                            eq.getPuntosContraTotales(),
-                                            eq.getPartidosGanadosUltimos10(),
-                                            eq.getPartidosPerdidosUltimos10(),
-                                            true
-                                    );
-                                    listaEquipos[listaEquiposInd] = equipoFav;
-                                } else { // El equipo NO ES FAVORITO
-                                    listaEquipos[listaEquiposInd] = eq;
-                                }
-
-                                listaEquiposInd++;
-                                if (listaEquiposInd == 18) {
-                                    clasificacionRecyclerView.setAdapter(
-                                            new ClasificacionAdapter(listaEquipos)
-                                    );
-                                }
-                            }
-                        }
-                    }
-                });
-
-        WorkManager.getInstance(requireContext()).enqueue(otwr2);
-    }*/
 }

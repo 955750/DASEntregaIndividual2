@@ -7,6 +7,15 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Base64;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -23,20 +32,8 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
-import android.provider.MediaStore;
-import android.util.Base64;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Toast;
-
 import com.example.dasentregaindividual2.R;
-import com.example.dasentregaindividual2.menu_principal.MenuPrincipalFragment;
 import com.example.dasentregaindividual2.servidor.base_de_datos.usuario.CambiarFotoDePerfil;
-import com.example.dasentregaindividual2.servidor.base_de_datos.usuario.ExisteParUsuarioContraseña;
 import com.example.dasentregaindividual2.servidor.base_de_datos.usuario.RecuperarFotoDePerfil;
 
 import java.io.ByteArrayOutputStream;
@@ -97,14 +94,20 @@ public class PerfilFragment extends Fragment {
         takePictureLauncher.launch(elIntentFoto);
     }
 
+    /*
+     * En esta función, se encola una tarea cuyo cometido es lanzar la siguiente consulta contra
+     * la base de datos remota (la tarea requiere de conexión a internet para poder acceder a la
+     * base de datos alojada en el servidor):
+     *
+     * UPDATE Usuario
+     * SET foto_perfil_base_64 = ?
+     * WHERE nombre_usuario = ?
+     */
     private void subirFoto(Bitmap fotoBitmap) {
         SharedPreferences preferencias = PreferenceManager
                 .getDefaultSharedPreferences(requireContext());
         String usuario = preferencias.getString("usuario", null);
-        Log.d("PerfilFragment", "ORIGINAL --> " + fotoBitmap.getByteCount());
-        Bitmap bitmapReescalado = reescalarBitmap(fotoBitmap);
-        Log.d("PerfilFragment", "REESCALADO --> " + bitmapReescalado.getByteCount());
-        String fotoPerfilBase64 = bitmapABase64(bitmapReescalado);
+        String fotoPerfilBase64 = bitmapABase64(fotoBitmap);
         Data parametros = new Data.Builder()
                 .putString("nombreUsuario", usuario)
                 .putString("fotoPerfilBase64", fotoPerfilBase64)
@@ -124,8 +127,9 @@ public class PerfilFragment extends Fragment {
 
                     /*
                      * Una vez completada la consulta, se comprueba el resultado de la consulta.
-                     * Si se da la condición 'cantidadUsuarios == 1' se procede a completar el
-                     * proceso de inicio de sesión
+                     * Si se da la condición 'consultaExitosa == 1' se muestra un aviso de que
+                     * la actualización de la foto de perfil se ha hecho efectiva. En el caso
+                     * opuesto, se indica que ha ocurrido un error.
                      */
                     @Override
                     public void onChanged(WorkInfo workInfo) {
@@ -163,25 +167,14 @@ public class PerfilFragment extends Fragment {
         return Base64.encodeToString(fotoTransformada,Base64.DEFAULT);
     }
 
-    private Bitmap reescalarBitmap(Bitmap bitmapFoto) {
-        int anchoDestino = fotoPerfilIV.getWidth();
-        int altoDestino = fotoPerfilIV.getHeight();
-        Log.d("PerfilFragment", "ImageView --> ANCHO: " + anchoDestino + " ALTO: " + altoDestino);
-        int anchoImagen = bitmapFoto.getWidth();
-        int altoImagen = bitmapFoto.getHeight();
-        Log.d("PerfilFragment", "Bitmap --> ANCHO: " + anchoImagen + " ALTO: " + altoImagen);
-        float ratioImagen = (float) anchoImagen / (float) altoImagen;
-        float ratioDestino = (float) anchoDestino / (float) altoDestino;
-        int anchoFinal = anchoDestino;
-        int altoFinal = altoDestino;
-        if (ratioDestino > ratioImagen) {
-            anchoFinal = (int) ((float)altoDestino * ratioImagen);
-        } else {
-            altoFinal = (int) ((float)anchoDestino / ratioImagen);
-        }
-        return Bitmap.createScaledBitmap(bitmapFoto,anchoFinal,altoFinal,true);
-    }
-
+    /*
+     * En esta función, se encola una tarea cuyo cometido es lanzar la siguiente consulta contra
+     * la base de datos remota (la tarea requiere de conexión a internet para poder acceder a la
+     * base de datos alojada en el servidor):
+     *
+     * SELECT foto_perfil_base_64 FROM Usuario
+     * WHERE nombre_usuario = ?
+     */
     private void recuperarFotoDePerfil() {
         SharedPreferences preferencias = PreferenceManager
                 .getDefaultSharedPreferences(requireContext());
@@ -203,11 +196,9 @@ public class PerfilFragment extends Fragment {
                 .observe((LifecycleOwner) requireContext(), new Observer<WorkInfo>() {
 
                     /*
-                     * CAMBIAR COMENTARIO
-                     *
-                     * Una vez completada la consulta, se comprueba el resultado de la consulta.
-                     * Si se da la condición 'cantidadUsuarios == 1' se procede a completar el
-                     * proceso de inicio de sesión
+                     * Una vez completada la consulta, en caso de recibir algún dato, se
+                     * recupera la foto de perfil para poder ser mostrada en pantalla. En caso
+                     * contrario veremos una imagen genérica
                      */
                     @Override
                     public void onChanged(WorkInfo workInfo) {

@@ -86,10 +86,13 @@ public class MainActivity extends AppCompatActivity
         activarAlarma();
     }
 
+    /*
+     * Función para activar la alarma tras 5 segundos aproximadamente. Tras lanzar esta alarma,
+     * su 'broadcast receiver' correspondiente va a lanzar una notificación.
+     */
     private void activarAlarma() {
         Intent intentBC = new Intent(this, ReceiverAlarma.class);
         intentBC.putExtra("menseje", "ALARM MANAGER");
-        // intentBC.setAction("avisoPersonalizado");
         PendingIntent ibc = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             ibc = PendingIntent.getBroadcast(

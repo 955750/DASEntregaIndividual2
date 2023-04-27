@@ -22,6 +22,12 @@ public class AñadirToken extends Worker {
         super(context, workerParams);
     }
 
+    /*
+     * En esta función se ejecuta la siguiente consulta de forma asíncrona:
+     *
+     * INSERT INTO TokenFCM (token)
+     * VALUES ?
+     */
     @NonNull
     @Override
     public Result doWork() {

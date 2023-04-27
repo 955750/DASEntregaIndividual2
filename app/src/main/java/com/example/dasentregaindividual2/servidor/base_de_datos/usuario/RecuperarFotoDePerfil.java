@@ -22,8 +22,11 @@ public class RecuperarFotoDePerfil extends Worker {
         super(context, workerParams);
     }
 
-    /*
-     * AÑADIR COMENTARIO
+     /*
+     * En esta función se ejecuta la siguiente consulta de forma asíncrona:
+     *
+     * SELECT foto_perfil_base_64 FROM Usuario
+     * WHERE nombre_usuario = ?
      */
     @NonNull
     @Override
@@ -81,9 +84,6 @@ public class RecuperarFotoDePerfil extends Worker {
                             .putString("fotoPerfilBase64", fotoPerfilBase64.toString())
                             .build();
                 }
-
-
-
                 inputStream.close();
             }
         } catch (IOException e) {

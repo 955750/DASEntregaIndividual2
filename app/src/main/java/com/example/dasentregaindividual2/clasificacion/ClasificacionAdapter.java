@@ -43,7 +43,7 @@ public class ClasificacionAdapter extends RecyclerView.Adapter<ClasificacionView
         return clasificacionViewHolder;
     }
 
-    private Bitmap base64StringToBitmap(String base64String) {
+    private Bitmap base64StringABitmap(String base64String) {
         try{
             byte [] encodeByte = Base64.decode(base64String,Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
@@ -63,7 +63,7 @@ public class ClasificacionAdapter extends RecyclerView.Adapter<ClasificacionView
         EquipoClasificacion equipoActual = clasificacion[position];
         holder.posicionClasifacionTV.setText(String.valueOf(equipoActual.getPosicion()));
         String escudoBase64 = equipoActual.getEscudoBase64();
-        holder.escudoIV.setImageBitmap(base64StringToBitmap(escudoBase64));
+        holder.escudoIV.setImageBitmap(base64StringABitmap(escudoBase64));
         holder.nombreEquipoTV.setText(equipoActual.getNombre());
         holder.partidosGanadosTotalesTV.setText(String.valueOf(equipoActual
             .getPartidosGanadosTotales()));

@@ -22,6 +22,13 @@ public class CambiarFotoDePerfil extends Worker {
         super(context, workerParams);
     }
 
+    /*
+     * En esta función se ejecuta la siguiente consulta de forma asíncrona:
+     *
+     * UPDATE Usuario
+     * SET foto_perfil_base_64 = ?
+     * WHERE nombre_usuario = ?
+     */
     @NonNull
     @Override
     public Result doWork() {

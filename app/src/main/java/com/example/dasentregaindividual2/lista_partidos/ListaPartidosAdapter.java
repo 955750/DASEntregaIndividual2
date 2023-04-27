@@ -37,7 +37,7 @@ public class ListaPartidosAdapter extends RecyclerView.Adapter<ListaPartidosView
         return listaPartidosViewHolder;
     }
 
-    private Bitmap base64StringToBitmap(String base64String) {
+    private Bitmap base64StringABitmap(String base64String) {
         try{
             byte [] encodeByte = Base64.decode(base64String,Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
@@ -54,9 +54,7 @@ public class ListaPartidosAdapter extends RecyclerView.Adapter<ListaPartidosView
         /* Cargar datos del equipo local */
         EquipoPartido equipoLocal = partidosJornada[position].getEquipos()[0];
         String escudoBase64Local = equipoLocal.getEscudoBase64();
-        //holder.escudoIV.setImageBitmap(base64StringToBitmap(escudoBase64Local));
-        holder.escudoEquipoLocalIV.setImageBitmap(base64StringToBitmap(escudoBase64Local));
-        //holder.escudoEquipoLocalIV.setImageResource(equipoLocal.getEscudoBase64());
+        holder.escudoEquipoLocalIV.setImageBitmap(base64StringABitmap(escudoBase64Local));
         holder.nombreEquipoLocalTV.setText(equipoLocal.getNombre());
         holder.ultimosPartidosEquipoLocalTV.setText(equipoLocal.getRachaUltimosPartidos());
         holder.puntosEquipoLocalTV.setText(String.valueOf(equipoLocal.getPuntos()));
@@ -64,8 +62,7 @@ public class ListaPartidosAdapter extends RecyclerView.Adapter<ListaPartidosView
         /* Cargar datos del equipo visitante */
         EquipoPartido equipoVisitante = partidosJornada[position].getEquipos()[1];
         String escudoBase64Visitante = equipoVisitante.getEscudoBase64();
-        // holder.escudoEquipoVisitanteIV.setImageResource(equipoVisitante.getEscudoBase64());
-        holder.escudoEquipoVisitanteIV.setImageBitmap(base64StringToBitmap(escudoBase64Visitante));
+        holder.escudoEquipoVisitanteIV.setImageBitmap(base64StringABitmap(escudoBase64Visitante));
         holder.nombreEquipoVisitanteTV.setText(equipoVisitante.getNombre());
         holder.ultimosPartidosEquipoVisitanteTV.setText(equipoVisitante.getRachaUltimosPartidos());
         holder.puntosEquipoVisitanteTV.setText(String.valueOf(equipoVisitante.getPuntos()));

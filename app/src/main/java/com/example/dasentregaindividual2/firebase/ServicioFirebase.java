@@ -2,27 +2,13 @@ package com.example.dasentregaindividual2.firebase;
 
 import android.net.Uri;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Observer;
-import androidx.work.Constraints;
-import androidx.work.Data;
-import androidx.work.ListenableWorker;
-import androidx.work.NetworkType;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkInfo;
-import androidx.work.WorkManager;
 
-import com.example.dasentregaindividual2.R;
-import com.example.dasentregaindividual2.servidor.base_de_datos.usuario.InsertarUsuario;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -32,20 +18,6 @@ public class ServicioFirebase extends FirebaseMessagingService {
     public ServicioFirebase() {
 
     }
-
-    /*
-     * APK en primer plano --> Se ejecuta el método; NO se muestra notificación (a no ser que la
-     * programemos nosotros)
-     *
-     * APK en 'background' -->
-     *      + Tipo NOTIFICACIÓN -->
-     *          - Se muestra notificación en la barra
-     *          - NO se ejecuta el método
-     *          - En la propia notificación se puede configurar el evento a ejecutar
-     *
-     *      + Tipo DATOS -->
-     *          - Se ejecuta el método
-     */
 
     public void onMessageReceived(RemoteMessage remoteMessage) {
         if (remoteMessage.getData().size() > 0) { // Si el mensaje viene con datos
@@ -58,9 +30,9 @@ public class ServicioFirebase extends FirebaseMessagingService {
     }
 
     /*
-     * Qué hacer cada vez que se genere un token para el dispositivo
+     * En esta función, al instalar la aplicación o borrar los datos y volver a abrirla se recibe
+     * un token. Este es añadido a la base de datos para poder enviar notificaciones push via FCM
      */
-
     @Override
     public void onNewToken(@NonNull String s) {
         super.onNewToken(s);
@@ -68,6 +40,12 @@ public class ServicioFirebase extends FirebaseMessagingService {
         añadirToken(s);
     }
 
+    /*
+     * En esta función se ejecuta la siguiente consulta de forma asíncrona:
+     *
+     * INSERT INTO TokenFCM (token)
+     * VALUES ?
+     */
     private void añadirToken(String token) {
         String direccion = "http://ec2-54-93-62-124.eu-central-1.compute.amazonaws.com/" +
                 "jfuentes019/WEB/Entrega%20Individual%202/consultas_token_fcm.php";
