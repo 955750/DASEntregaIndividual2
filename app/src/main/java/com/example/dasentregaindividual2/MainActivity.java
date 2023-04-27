@@ -58,9 +58,9 @@ public class MainActivity extends AppCompatActivity
             Log.d("MainActivity", "fecha --> " + fecha);
         }
 
-        // solicitarPermisosNotificaciones();
+        solicitarPermisosNotificaciones();
 
-        solicitarPermisosCamara();
+        pedirPermisosCalendario();
 
         NotificationManager elManager = (NotificationManager)
             getSystemService(Context.NOTIFICATION_SERVICE);
@@ -91,20 +91,26 @@ public class MainActivity extends AppCompatActivity
     private void solicitarPermisosNotificaciones() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
-                this, Manifest.permission.POST_NOTIFICATIONS) !=
-                PackageManager.PERMISSION_GRANTED) {
+                    this, Manifest.permission.POST_NOTIFICATIONS) !=
+                    PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new
-                    String[]{Manifest.permission.POST_NOTIFICATIONS}, 11);
+                        String[]{Manifest.permission.POST_NOTIFICATIONS}, 11);
             }
         }
     }
 
-    private void solicitarPermisosCamara() {
+    private void pedirPermisosCalendario() {
         if (ContextCompat.checkSelfPermission(
-                this, Manifest.permission.CAMERA) !=
+                this, Manifest.permission.WRITE_CALENDAR) !=
                 PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new
-                    String[]{Manifest.permission.CAMERA}, 12);
+                    String[]{Manifest.permission.WRITE_CALENDAR}, 13);
+        }
+        if (ContextCompat.checkSelfPermission(
+                this, Manifest.permission.READ_CALENDAR) !=
+                PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new
+                    String[]{Manifest.permission.READ_CALENDAR}, 13);
         }
     }
 

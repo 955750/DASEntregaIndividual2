@@ -1,8 +1,10 @@
 package com.example.dasentregaindividual2.menu_principal;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
@@ -280,6 +284,7 @@ public class MenuPrincipalFragment extends Fragment {
     }
 
     private void navegarHaciaPerfil(View view) {
+        solicitarPermisosCamara();
         NavDirections accion = MenuPrincipalFragmentDirections
                 .actionMenuPrincipalFragmentToPerfilFragment();
         Navigation.findNavController(view).navigate(accion);
@@ -373,5 +378,14 @@ public class MenuPrincipalFragment extends Fragment {
                     mostrarDialogoSalir();
                 }
             });
+    }
+
+    private void solicitarPermisosCamara() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.CAMERA) !=
+                PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(), new
+                    String[]{Manifest.permission.CAMERA}, 12);
+        }
     }
 }
